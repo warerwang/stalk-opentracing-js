@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/debug": "4.1.4",
     "@types/lodash": "4.14.132",
     "ts-loader": "6.0.1",
     "typescript": "3.4.5",
@@ -17,6 +18,7 @@
     "webpack-cli": "3.3.2"
   },
   "dependencies": {
+    "debug": "4.1.1",
     "lodash": "4.17.11",
     "shortid": "2.2.14"
   }
