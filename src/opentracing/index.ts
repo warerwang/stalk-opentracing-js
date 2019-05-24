@@ -6,8 +6,6 @@ import Span from './span';
 import SpanContext from './span_context';
 import {SpanOptions, Tracer} from './tracer';
 
-import {MockTracer} from './mock_tracer';
-
 export {
     BinaryCarrier,
     Reference,
@@ -15,8 +13,7 @@ export {
     Span,
     Tracer,
     SpanOptions,
-    Tags,
-    MockTracer
+    Tags
 };
 
 export * from './global_tracer';
