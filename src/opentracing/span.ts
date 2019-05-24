@@ -1,6 +1,8 @@
 import * as noop from './noop';
 import SpanContext from './span_context';
 import Tracer from './tracer';
+import SpanLogger from './span-logger';
+
 
 /**
  * Span represents a logical unit of work as part of a broader Trace. Examples
@@ -9,6 +11,13 @@ import Tracer from './tracer';
  * may have zero or more child Spans, which in turn may have children.
  */
 export class Span {
+    readonly logger: SpanLogger;
+
+
+    constructor() {
+        this.logger = new SpanLogger(this);
+    }
+
 
     // ---------------------------------------------------------------------- //
     // OpenTracing API methods
