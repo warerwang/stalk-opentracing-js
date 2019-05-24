@@ -3,7 +3,7 @@ import Span from './span';
 
 export enum SpanLoggerLogLevel {
     ERROR = 'error',
-    WARN = ' warn',
+    WARN = 'warn',
     INFO = 'info',
     VERBOSE = 'verbose',
     DEBUG = 'debug',
