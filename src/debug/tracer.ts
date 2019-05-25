@@ -1,5 +1,5 @@
 import * as opentracing from '../opentracing/index';
-import BaseTracer from '../base/tracer';
+import BasicTracer from '../basic/tracer';
 import DebugSpan from './span';
 import { ISpanLoggerLogFields } from '../opentracing/span-logger';
 import debug from 'debug';
@@ -13,7 +13,7 @@ import debug from 'debug';
  * you must set `DEBUG` environment variable or `localStorage.debug`, please refer:
  * https://github.com/visionmedia/debug/
  */
-export default class DebugTracer extends BaseTracer {
+export default class DebugTracer extends BasicTracer {
     /** Overriding BaseTracer's span class. */
     protected spanClass = DebugSpan;
 

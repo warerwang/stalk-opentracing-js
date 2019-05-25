@@ -1,7 +1,7 @@
 import * as opentracing from '../opentracing/index';
 
 
-export class BaseSpanContext extends opentracing.SpanContext {
+export class BasicSpanContext extends opentracing.SpanContext {
     private _traceId: string;
     private _spanId: string;
 
@@ -24,4 +24,4 @@ export class BaseSpanContext extends opentracing.SpanContext {
     }
 }
 
-export default BaseSpanContext;
+export default BasicSpanContext;

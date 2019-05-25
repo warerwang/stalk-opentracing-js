@@ -1,5 +1,5 @@
 import * as opentracing from '../opentracing/index';
-import BaseTracer from '../base/tracer';
+import BasicTracer from '../basic/tracer';
 import WinstonSpan from './span';
 import { ISpanLoggerLogFields } from '../opentracing/span-logger';
 
@@ -18,7 +18,7 @@ import { ISpanLoggerLogFields } from '../opentracing/span-logger';
  *  - `message` => Log message
  *  - `payload` => any payload if specified
  */
-export default class DebugTracer extends BaseTracer {
+export default class DebugTracer extends BasicTracer {
     /** Overriding BaseTracer's span class. */
     protected spanClass = WinstonSpan;
 

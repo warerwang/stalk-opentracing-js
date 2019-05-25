@@ -1,29 +1,29 @@
 import * as opentracing from '../opentracing/index';
 import * as Noop from '../opentracing/noop';
-import BaseSpan from './span';
-import BaseSpanContext from './span-context';
+import BasicSpan from './span';
+import BasicSpanContext from './span-context';
 import * as shortid from 'shortid';
 
 
 /**
- * BaseTracer inherits opentracing's noop class, with the
- * implementation of data-structure stuff. Please note that this BaseTracer
+ * BasicTracer inherits opentracing's noop class, with the
+ * implementation of data-structure stuff. Please note that this BasicTracer
  * does not record any spans, hoping to be garbage-collected by js engine.
  * The job of recording and reporting spans is left to implementor.
  */
-export class BaseTracer extends opentracing.Tracer {
+export class BasicTracer extends opentracing.Tracer {
     /**
      * Tracer will be create instances of this class. This is for
-     * making easier to inherit BaseTracer class. (inheritence sucks)
+     * making easier to inherit BasicTracer class. (inheritence sucks)
      */
-    protected spanClass = BaseSpan;
+    protected spanClass = BasicSpan;
 
 
     /**
      * Overridden just for returning span's type.
      */
-    startSpan(name: string, options: opentracing.SpanOptions = {}): BaseSpan {
-        return super.startSpan(name, options) as BaseSpan;
+    startSpan(name: string, options: opentracing.SpanOptions = {}): BasicSpan {
+        return super.startSpan(name, options) as BasicSpan;
     }
 
 
@@ -41,7 +41,7 @@ export class BaseTracer extends opentracing.Tracer {
         const firstRef = fields.references ? fields.references[0] : null;
         const traceId = firstRef ? firstRef.referencedContext().toTraceId() : shortid.generate();
         const spanId = shortid.generate();
-        const spanContext = new BaseSpanContext(traceId, spanId);
+        const spanContext = new BasicSpanContext(traceId, spanId);
 
         // Create a span instance from `this.spanClass` class.
         const span = new this.spanClass(this, spanContext);
@@ -59,7 +59,7 @@ export class BaseTracer extends opentracing.Tracer {
     }
 
 
-    protected _inject(spanContext: BaseSpanContext, format: string, carrier: any) {
+    protected _inject(spanContext: BasicSpanContext, format: string, carrier: any) {
         // TODO
     }
 
@@ -70,4 +70,4 @@ export class BaseTracer extends opentracing.Tracer {
     }
 }
 
-export default BaseTracer;
+export default BasicTracer;

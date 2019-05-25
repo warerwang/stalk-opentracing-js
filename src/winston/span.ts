@@ -1,9 +1,9 @@
 import * as opentracing from '../opentracing/index';
 import WinstonTracer from './tracer';
-import BaseSpan from '../base/span';
+import BasicSpan from '../basic/span';
 
 
-export default class WinstonSpan extends BaseSpan {
+export default class WinstonSpan extends BasicSpan {
     /**
      * Override just for returning tracer's type
      */
