@@ -2,7 +2,6 @@ import * as opentracing from '../opentracing/index';
 import BasicTracer from '../basic/tracer';
 import DebugSpan from './span';
 import { ISpanLoggerLogFields } from '../opentracing/span-logger';
-import debug from 'debug';
 
 
 /**
@@ -17,11 +16,21 @@ export default class DebugTracer extends BasicTracer {
     /** Overriding BaseTracer's span class. */
     protected spanClass = DebugSpan;
 
+
+    /** Reference of winston logger instance */
+    private debugFactory: any;
+
     /**
      * Keep references of created debug instances to prevent memory leak:
      * https://github.com/visionmedia/debug/issues/678
      */
     private debugInstances: { [key: string]: debug.Debugger } = {};
+
+
+    constructor(debugFactory: any) {
+        super();
+        this.debugFactory = debugFactory;
+    }
 
 
     /**
@@ -41,7 +50,7 @@ export default class DebugTracer extends BasicTracer {
 
         let debugInstance = this.debugInstances[component];
         if (!debugInstance) {
-            debugInstance = this.debugInstances[component] = debug(component);
+            debugInstance = this.debugInstances[component] = this.debugFactory(component);
         }
 
         const level = logFields.level || 'NO-LEVEL';

@@ -23,7 +23,7 @@ export default class DebugTracer extends BasicTracer {
     protected spanClass = WinstonSpan;
 
     /** Reference of winston logger instance */
-    private winstonLogger: any
+    private winstonLogger: any;
 
 
     constructor(winstonLogger: any) {
