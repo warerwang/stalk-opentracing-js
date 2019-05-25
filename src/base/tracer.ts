@@ -46,6 +46,7 @@ export class BaseTracer extends opentracing.Tracer {
         // Create a span instance from `this.spanClass` class.
         const span = new this.spanClass(this, spanContext);
         span.setOperationName(name);
+        if (fields.tags) span.addTags(fields.tags);
 
         if (fields.references) {
             for (const ref of fields.references) {
