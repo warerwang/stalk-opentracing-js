@@ -4,6 +4,7 @@ export { BasicTracer } from './basic/tracer';
 export { BaseReporter } from './reporters/base';
 export { DebugReporter } from './reporters/debug';
 export { WinstonReporter } from './reporters/winston';
+export { InMemoryReporter } from './reporters/in-memory';
 import { Trace } from './decorators/trace';
 import { ComponentName } from './decorators/component-name';
 export declare const decorators: {
