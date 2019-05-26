@@ -1,8 +1,9 @@
 {
     "compilerOptions": {
         "outDir": "./dist/",
-        "noImplicitAny": true,
         "sourceMap": true,
+        "declaration": true,
+        "noImplicitAny": true,
         "experimentalDecorators": true,
         "module": "es6",
         "target": "es5"

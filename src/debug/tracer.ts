@@ -12,7 +12,7 @@ import { ISpanLoggerLogFields } from '../opentracing/span-logger';
  * you must set `DEBUG` environment variable or `localStorage.debug`, please refer:
  * https://github.com/visionmedia/debug/
  */
-export default class DebugTracer extends BasicTracer {
+export class DebugTracer extends BasicTracer {
     /** Overriding BaseTracer's span class. */
     protected spanClass = DebugSpan;
 
@@ -64,3 +64,6 @@ export default class DebugTracer extends BasicTracer {
         }
     }
 }
+
+
+export default DebugTracer;

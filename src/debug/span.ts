@@ -3,7 +3,7 @@ import DebugTracer from './tracer';
 import BasicSpan from '../basic/span';
 
 
-export default class DebugSpan extends BasicSpan {
+export class DebugSpan extends BasicSpan {
     /**
      * Override just for returning tracer's type
      */
@@ -22,3 +22,6 @@ export default class DebugSpan extends BasicSpan {
         tracer.forward(component, keyValuePairs as any);
     }
 }
+
+
+export default DebugSpan;

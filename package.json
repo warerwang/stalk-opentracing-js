@@ -2,8 +2,10 @@
   "name": "tracing",
   "version": "0.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/node.js",
+  "types": "dist/index.node.d.ts",
   "scripts": {
+    "postinstall": "./scripts/symlink.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
