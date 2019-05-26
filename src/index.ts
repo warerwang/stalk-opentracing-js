@@ -8,6 +8,7 @@ export { DebugReporter } from './reporters/debug';
 export { WinstonReporter } from './reporters/winston';
 export { InMemoryReporter } from './reporters/in-memory';
 export { ComponentFilterReporter } from './reporters/component-filter';
+export { LogLevelFilterReporter } from './reporters/log-level-filter';
 
 import { Trace } from './decorators/trace';
 import { ComponentName } from './decorators/component-name';
