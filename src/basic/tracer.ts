@@ -2,21 +2,46 @@ import * as opentracing from '../opentracing/index';
 import * as Noop from '../opentracing/noop';
 import BasicSpan from './span';
 import BasicSpanContext from './span-context';
+import BaseReporter from '../reporters/base';
 import * as shortid from 'shortid';
 
 
 /**
  * BasicTracer inherits opentracing's noop class, with the
- * implementation of data-structure stuff. Please note that this BasicTracer
- * does not record any spans, hoping to be garbage-collected by js engine.
- * The job of recording and reporting spans is left to implementor.
+ * implementation of data-structure stuff and reporter interface.
+ * Please note that this BasicTracer does not record any spans, hoping
+ * to be garbage-collected by js engine. The job of recording and reporting
+ * spans is left to reporters.
  */
 export class BasicTracer extends opentracing.Tracer {
     /**
-     * Tracer will be create instances of this class. This is for
-     * making easier to inherit BasicTracer class. (inheritence sucks)
+     * Reporter instances to report when a span is created.
      */
-    protected spanClass = BasicSpan;
+    protected _reporters: BaseReporter[] = [];
+    get reporters() { return this._reporters; }
+
+
+    /**
+     * Adds a reporter.
+     */
+    addReporter(reporter: BaseReporter) {
+        this._reporters.push(reporter);
+    }
+
+
+    /**
+     * Removes a reporter.
+     */
+    removeReporter(reporter: BaseReporter) {
+        const index = this._reporters.indexOf(reporter);
+        if (index > -1) {
+            const reporter = this._reporters[index];
+            this._reporters.splice(index, 1);
+            reporter.close();
+            return true;
+        }
+        return false;
+    }
 
 
     /**
@@ -44,7 +69,7 @@ export class BasicTracer extends opentracing.Tracer {
         const spanContext = new BasicSpanContext(traceId, spanId);
 
         // Create a span instance from `this.spanClass` class.
-        const span = new this.spanClass(this, spanContext);
+        const span = new BasicSpan(this, spanContext);
         span.setOperationName(name);
         if (fields.tags) span.addTags(fields.tags);
 
@@ -55,6 +80,14 @@ export class BasicTracer extends opentracing.Tracer {
         }
 
         span.start(fields.startTime);
+
+        // Not cool bro
+        this._reporters.forEach((reporter) => {
+            if (reporter.accepts.spanCreate) {
+                reporter.recieveSpanCreate(span);
+            }
+        });
+
         return span;
     }
 

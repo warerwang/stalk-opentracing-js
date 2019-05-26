@@ -1,6 +1,7 @@
 import * as opentracing from '../opentracing/index';
 import BasicTracer from './tracer';
 import BasicSpanContext from './span-context';
+import BaseReporter from '../reporters/base';
 
 
 export interface ISpanLog {
@@ -112,9 +113,17 @@ export class BasicSpan extends opentracing.Span {
      * Adds a log.
      */
     protected _log(keyValuePairs: { [key: string]: any }, timestamp?: number) {
-        this._logs.push({
+        const log = {
             fields: keyValuePairs,
             timestamp: timestamp || Date.now()
+        };
+        this._logs.push(log);
+
+        // Not cool bro
+        this.__tracer.reporters.forEach((reporter) => {
+            if (reporter.accepts.spanLog) {
+                reporter.recieveSpanLog(this, log);
+            }
         });
     }
 
@@ -124,6 +133,13 @@ export class BasicSpan extends opentracing.Span {
      */
     protected _finish(finishTime?: number) {
         this._finishTime = finishTime || Date.now();
+
+        // Not cool bro
+        this.__tracer.reporters.forEach((reporter) => {
+            if (reporter.accepts.spanFinish) {
+                reporter.recieveSpanFinish(this);
+            }
+        });
     }
 }
 
