@@ -4,6 +4,7 @@ import BasicSpan from './span';
 import BasicSpanContext from './span-context';
 import BaseReporter from '../reporters/base';
 import * as shortid from 'shortid';
+import * as PlainObjectCarrierFormat from '../carrier-formats/plain-object';
 
 
 /**
@@ -92,14 +93,43 @@ export class BasicTracer extends opentracing.Tracer {
     }
 
 
+    /**
+     * Tries to inject given span context into carrier. This method should not throw an error.
+     */
     protected _inject(spanContext: BasicSpanContext, format: string, carrier: any) {
-        // TODO
+        switch (format) {
+            case PlainObjectCarrierFormat.NAME:
+                return PlainObjectCarrierFormat.inject(spanContext, carrier);
+            default:
+                console.error(`Could not inject context into carrier, unknown format "${format}"`, carrier);
+        }
     }
 
 
+    /**
+     * Tries to extract span context from any supported carrier. This method should not
+     * throw an error, return nil instead. Creating a new trace is not our responsibility.
+     */
     protected _extract(format: string, carrier: any): opentracing.SpanContext | null {
-        // TODO
-        return Noop.spanContext!;
+        let traceId: string;
+        let spanId: string;
+
+        switch (format) {
+            case PlainObjectCarrierFormat.NAME: {
+                const plainObject = PlainObjectCarrierFormat.extract(carrier);
+                traceId = plainObject.traceId;
+                spanId = plainObject.spanId;
+                break;
+            }
+            default: {
+                console.error(`Could not extract context from carrier, unknown carrier format "${format}"`, carrier);
+            }
+        }
+
+        // If traceId or spanId missing, return null
+        if (!traceId || !spanId) return;
+
+        return new BasicSpanContext(traceId, spanId);
     }
 }
 

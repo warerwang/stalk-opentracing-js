@@ -31,7 +31,14 @@ export declare class BasicTracer extends opentracing.Tracer {
      * Main span creating method.
      */
     protected _startSpan(name: string, fields: opentracing.SpanOptions): BasicSpan;
+    /**
+     * Tries to inject given span context into carrier. This method should not throw an error.
+     */
     protected _inject(spanContext: BasicSpanContext, format: string, carrier: any): void;
+    /**
+     * Tries to extract span context from any supported carrier. This method should not
+     * throw an error, return nil instead. Creating a new trace is not our responsibility.
+     */
     protected _extract(format: string, carrier: any): opentracing.SpanContext | null;
 }
 export default BasicTracer;
