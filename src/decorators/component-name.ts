@@ -31,6 +31,9 @@ export function ComponentName(name: string) {
 }
 
 
+export default ComponentName;
+
+
 /**
  * A helper function to extract component name from target instance.
  */

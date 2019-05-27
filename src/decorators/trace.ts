@@ -4,9 +4,10 @@ import { getComponentName } from './component-name';
 
 
 /**
- * `@Trace()` decorator's supported relation types.
+ *
  */
-export type TraceRelationType = 'newTrace' | 'childOf' | 'followsFrom';
+export type TracedMethod = (span: opentracing.Span, ...args: any[]) => any;
+export type RelationHandler = (span: opentracing.Span, ...args: any[]) => Partial<opentracing.SpanOptions>;
 
 
 /**
@@ -21,7 +22,7 @@ export type TraceRelationType = 'newTrace' | 'childOf' | 'followsFrom';
  * Sample usage:
  * ```ts
  * class Calculator {
- *      @Trace({ operationName: 'multiply', relationType: 'newTrace', autoFinish: true })
+ *      @Trace({ operationName: 'multiply', relation: NewTraceRelation, autoFinish: true })
  *      multiply(span, a, b) {
  *          // `span` is automatically created from opentracing's global tracer
  *          // with it's operation name set, you can use standart `opentracing.Span` methods.
@@ -36,7 +37,7 @@ export type TraceRelationType = 'newTrace' | 'childOf' | 'followsFrom';
  *      }
  *
  *
- *      @Trace({ relationType: 'childOf', autoFinish: true }) // operationName can be omitted, method name is used by default
+ *      @Trace({ relation: ChildOfRelation, autoFinish: true }) // operationName can be omitted, method name is used by default
  *      sum(span, a, b) {
  *          span.logger.info(`Sum is called with ${a} and ${b}`);
  *          return a + b;
@@ -48,6 +49,11 @@ export type TraceRelationType = 'newTrace' | 'childOf' | 'followsFrom';
  * // Because `multiply` method's trace relation is set to `newTrace`
  * ```
  *
+ * `relation` must be set a function as takes the same arguments with the decorated function.
+ * It will called before original method and it must be return some part of
+ * span options (`opentracing.SpanOptions`) that defines the relation to other spans.
+ * There are pre-defined some relations: `ChildOfRelation`, `FollowsFromRelation`, `NewTraceRelation`.
+ * If you want to extract span context from external communication, you should set your custom relation handler.
  *
  * If `autoFinish` is set true, return value of the method will be checked. If it is promise-like
  * object, we will wait until it settles. If it's resolved, current span will be finished normally. If it's
@@ -62,7 +68,7 @@ export type TraceRelationType = 'newTrace' | 'childOf' | 'followsFrom';
  * Therefore it's implementor's responsibility to call `span.finish()` to finish current span.
  * Sample usage:
  * ```ts
- * @Trace({ relationType: 'childOf', autoFinish: false })
+ * @Trace({ relation: ChildOfRelation, autoFinish: false })
  * getSomethingFromDatabase(span, id) {
  *      // ...
  *      db.get(id, (err, result) => {
@@ -78,13 +84,13 @@ export type TraceRelationType = 'newTrace' | 'childOf' | 'followsFrom';
  */
 export function Trace(options: {
     operationName?: string,
-    relationType: TraceRelationType | ((...args: any[]) => TraceRelationType),
+    relation: RelationHandler,
     autoFinish: boolean
 }) {
     return (
         target: Object,
         propertyName: string,
-        propertyDesciptor: TypedPropertyDescriptor<(span: opentracing.Span, ...args: any[]) => any>
+        propertyDesciptor: TypedPropertyDescriptor<TracedMethod>
     ) => {
         const originalMethod = propertyDesciptor.value;
         options.operationName = options.operationName || propertyName;
@@ -93,36 +99,26 @@ export function Trace(options: {
         propertyDesciptor.value = function(...args: any[]) {
             const parentSpan: opentracing.Span = args[0] instanceof opentracing.Span ? args[0] : null;
             const tracer = parentSpan ? parentSpan.tracer() : opentracing.globalTracer();
-            const newSpanOptions: opentracing.SpanOptions = {};
+            let newSpanOptions: opentracing.SpanOptions = {};
 
-            // If relation type is a function, execute it
-            if (typeof options.relationType == 'function') {
-                try {
-                    const relationType = options.relationType.apply(this, args);
-                    options.relationType = relationType;
-                } catch (err) {
-                    console.error(`Unexpected error in traces method "${options.operationName}"s relation type handler`);
-                    throw err;
-                }
+            try {
+                const handlerResultOptions = options.relation.apply(this, args);
+                newSpanOptions = {
+                    ...newSpanOptions,
+                    ...handlerResultOptions
+                };
+            } catch (err) {
+                console.error(`Unexpected error in traces method "${options.operationName}"s relation handler`);
+                throw err;
             }
 
             // Inject `@ComponentName` to tags
             const componentName = getComponentName(this);
             if (componentName) {
-                newSpanOptions.tags = { [opentracing.Tags.COMPONENT]: componentName };
-            }
-
-            // If relation type `childOf` or `followsFrom`, set-up span options
-            if (options.relationType == 'childOf' || options.relationType == 'followsFrom') {
-                if (!parentSpan) {
-                    throw new Error(`Traced method "${options.operationName}"s first argument must be a span`);
-                }
-
-                if (options.relationType == 'childOf') {
-                    newSpanOptions.childOf = parentSpan;
-                } else if (options.relationType == 'followsFrom') {
-                    newSpanOptions.references = [ opentracing.followsFrom(parentSpan) ];
-                }
+                newSpanOptions.tags = {
+                    [opentracing.Tags.COMPONENT]: componentName,
+                    ...newSpanOptions // Prepare result tags have higher priority
+                };
             }
 
             // Start a new span
@@ -171,4 +167,29 @@ export function Trace(options: {
 
         return propertyDesciptor;
     };
+}
+
+
+export default Trace;
+
+
+export function ChildOfRelation(parentSpan: opentracing.Span, ...args: any[]): Partial<opentracing.SpanOptions> {
+    if (!parentSpan) {
+        throw new Error(`Traced method's first argument must be a span`);
+    }
+    return { childOf: parentSpan.context() };
+}
+
+
+export function FollowFromRelation(parentSpan: opentracing.Span, ...args: any[]): Partial<opentracing.SpanOptions> {
+    if (!parentSpan) {
+        throw new Error(`Traced method's first argument must be a span`);
+    }
+    return { references: [ opentracing.followsFrom(parentSpan.context()) ] };
+}
+
+
+export function NewTraceRelation(parentSpan: opentracing.Span, ...args: any[]): Partial<opentracing.SpanOptions> {
+    // Parent span is ignored
+    return {};
 }

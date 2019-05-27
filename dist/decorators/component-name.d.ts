@@ -23,6 +23,7 @@ export declare const ComponentNamePropertyKey = "__COMPONENT_NAME__";
  * ```
  */
 export declare function ComponentName(name: string): (target: Function) => void;
+export default ComponentName;
 /**
  * A helper function to extract component name from target instance.
  */
