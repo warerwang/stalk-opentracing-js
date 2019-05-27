@@ -4,10 +4,11 @@ import { getComponentName } from './component-name';
 
 
 /**
- *
+ * Some types
  */
 export type TracedMethod = (span: opentracing.Span, ...args: any[]) => any;
 export type RelationHandler = (span: opentracing.Span, ...args: any[]) => Partial<opentracing.SpanOptions>;
+export type RelationParameterType = 'childOf' | 'followsFrom' | 'newTrace' | RelationHandler;
 
 
 /**
@@ -22,7 +23,7 @@ export type RelationHandler = (span: opentracing.Span, ...args: any[]) => Partia
  * Sample usage:
  * ```ts
  * class Calculator {
- *      @Trace({ operationName: 'multiply', relation: NewTraceRelation, autoFinish: true })
+ *      @Trace({ operationName: 'multiply', relation: 'newTrace', autoFinish: true })
  *      multiply(span, a, b) {
  *          // `span` is automatically created from opentracing's global tracer
  *          // with it's operation name set, you can use standart `opentracing.Span` methods.
@@ -37,7 +38,7 @@ export type RelationHandler = (span: opentracing.Span, ...args: any[]) => Partia
  *      }
  *
  *
- *      @Trace({ relation: ChildOfRelation, autoFinish: true }) // operationName can be omitted, method name is used by default
+ *      @Trace({ relation: 'childOf', autoFinish: true }) // operationName can be omitted, method name is used by default
  *      sum(span, a, b) {
  *          span.logger.info(`Sum is called with ${a} and ${b}`);
  *          return a + b;
@@ -52,7 +53,7 @@ export type RelationHandler = (span: opentracing.Span, ...args: any[]) => Partia
  * `relation` must be set a function as takes the same arguments with the decorated function.
  * It will called before original method and it must be return some part of
  * span options (`opentracing.SpanOptions`) that defines the relation to other spans.
- * There are pre-defined some relations: `ChildOfRelation`, `FollowsFromRelation`, `NewTraceRelation`.
+ * There are pre-defined some relations: `childOf`, `followsFrom`, `newTrace`.
  * If you want to extract span context from external communication, you should set your custom relation handler.
  *
  * If `autoFinish` is set true, return value of the method will be checked. If it is promise-like
@@ -68,7 +69,7 @@ export type RelationHandler = (span: opentracing.Span, ...args: any[]) => Partia
  * Therefore it's implementor's responsibility to call `span.finish()` to finish current span.
  * Sample usage:
  * ```ts
- * @Trace({ relation: ChildOfRelation, autoFinish: false })
+ * @Trace({ relation: 'childOf', autoFinish: false })
  * getSomethingFromDatabase(span, id) {
  *      // ...
  *      db.get(id, (err, result) => {
@@ -84,7 +85,7 @@ export type RelationHandler = (span: opentracing.Span, ...args: any[]) => Partia
  */
 export function Trace(options: {
     operationName?: string,
-    relation: RelationHandler,
+    relation: RelationParameterType,
     autoFinish: boolean
 }) {
     return (
@@ -95,6 +96,23 @@ export function Trace(options: {
         const originalMethod = propertyDesciptor.value;
         options.operationName = options.operationName || propertyName;
 
+        // Pre-defined relations
+        if (typeof options.relation == 'string') {
+            switch (options.relation) {
+                case 'childOf':
+                    options.relation = ChildOfRelation;
+                    break;
+                case 'followsFrom':
+                    options.relation = FollowFromRelation;
+                    break;
+                case 'newTrace':
+                    options.relation = NewTraceRelation;
+                    break;
+                default:
+                    throw new Error(`Unexpected relation type "${options.relation}"`);
+            }
+        }
+
         // Replace the method
         propertyDesciptor.value = function(...args: any[]) {
             const parentSpan: opentracing.Span = args[0] instanceof opentracing.Span ? args[0] : null;
@@ -102,7 +120,7 @@ export function Trace(options: {
             let newSpanOptions: opentracing.SpanOptions = {};
 
             try {
-                const handlerResultOptions = options.relation.apply(this, args);
+                const handlerResultOptions = (options.relation as RelationHandler).apply(this, args);
                 newSpanOptions = {
                     ...newSpanOptions,
                     ...handlerResultOptions

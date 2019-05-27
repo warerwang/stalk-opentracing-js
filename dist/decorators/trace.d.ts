@@ -1,9 +1,10 @@
 import * as opentracing from '../opentracing/index';
 /**
- *
+ * Some types
  */
 export declare type TracedMethod = (span: opentracing.Span, ...args: any[]) => any;
 export declare type RelationHandler = (span: opentracing.Span, ...args: any[]) => Partial<opentracing.SpanOptions>;
+export declare type RelationParameterType = 'childOf' | 'followsFrom' | 'newTrace' | RelationHandler;
 /**
  * Main `@Trace()` decorator for class methods to be traced. Due to typescript decorator
  * restrictions, we cannot apply this decorator to normal functions :/
@@ -16,7 +17,7 @@ export declare type RelationHandler = (span: opentracing.Span, ...args: any[]) =
  * Sample usage:
  * ```ts
  * class Calculator {
- *      @Trace({ operationName: 'multiply', relation: NewTraceRelation, autoFinish: true })
+ *      @Trace({ operationName: 'multiply', relation: 'newTrace', autoFinish: true })
  *      multiply(span, a, b) {
  *          // `span` is automatically created from opentracing's global tracer
  *          // with it's operation name set, you can use standart `opentracing.Span` methods.
@@ -31,7 +32,7 @@ export declare type RelationHandler = (span: opentracing.Span, ...args: any[]) =
  *      }
  *
  *
- *      @Trace({ relation: ChildOfRelation, autoFinish: true }) // operationName can be omitted, method name is used by default
+ *      @Trace({ relation: 'childOf', autoFinish: true }) // operationName can be omitted, method name is used by default
  *      sum(span, a, b) {
  *          span.logger.info(`Sum is called with ${a} and ${b}`);
  *          return a + b;
@@ -46,7 +47,7 @@ export declare type RelationHandler = (span: opentracing.Span, ...args: any[]) =
  * `relation` must be set a function as takes the same arguments with the decorated function.
  * It will called before original method and it must be return some part of
  * span options (`opentracing.SpanOptions`) that defines the relation to other spans.
- * There are pre-defined some relations: `ChildOfRelation`, `FollowsFromRelation`, `NewTraceRelation`.
+ * There are pre-defined some relations: `childOf`, `followsFrom`, `newTrace`.
  * If you want to extract span context from external communication, you should set your custom relation handler.
  *
  * If `autoFinish` is set true, return value of the method will be checked. If it is promise-like
@@ -62,7 +63,7 @@ export declare type RelationHandler = (span: opentracing.Span, ...args: any[]) =
  * Therefore it's implementor's responsibility to call `span.finish()` to finish current span.
  * Sample usage:
  * ```ts
- * @Trace({ relation: ChildOfRelation, autoFinish: false })
+ * @Trace({ relation: 'childOf', autoFinish: false })
  * getSomethingFromDatabase(span, id) {
  *      // ...
  *      db.get(id, (err, result) => {
@@ -78,7 +79,7 @@ export declare type RelationHandler = (span: opentracing.Span, ...args: any[]) =
  */
 export declare function Trace(options: {
     operationName?: string;
-    relation: RelationHandler;
+    relation: RelationParameterType;
     autoFinish: boolean;
 }): (target: Object, propertyName: string, propertyDesciptor: TypedPropertyDescriptor<TracedMethod>) => TypedPropertyDescriptor<TracedMethod>;
 export default Trace;
