@@ -1,3 +1,4 @@
+import * as opentracing from '../../opentracing/index';
 import BaseReporter from '../base';
 import BasicSpan from '../../basic/span';
 import SpanFilterProxyReporter from './span-filter';
@@ -23,7 +24,7 @@ export class SpanComponentTagFilterProxyReporter extends SpanFilterProxyReporter
      * Overriding
      */
     testSpan(span: BasicSpan) {
-        return this._predicate(span);
+        return this.matcher.test(span.getTag(opentracing.Tags.COMPONENT));
     }
 }
 
