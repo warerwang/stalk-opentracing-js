@@ -3,6 +3,7 @@ import * as opentracing from '../opentracing/index';
  * Some types
  */
 export declare type TracedMethod = (span: opentracing.Span, ...args: any[]) => any;
+export declare type AsyncTracedMethod = (span: opentracing.Span, ...args: any[]) => Promise<any>;
 export declare type RelationHandler = (span: opentracing.Span, ...args: any[]) => Partial<opentracing.SpanOptions>;
 export declare type RelationParameterType = 'childOf' | 'followsFrom' | 'newTrace' | RelationHandler;
 /**
@@ -83,6 +84,15 @@ export declare function Trace(options: {
     autoFinish: boolean;
 }): (target: Object, propertyName: string, propertyDesciptor: TypedPropertyDescriptor<TracedMethod>) => TypedPropertyDescriptor<TracedMethod>;
 export default Trace;
+/**
+ * Syntactic sugar `@TraceAsync` decorator for async functions. You can
+ * omit `autoFinish` option, it's enabled by default. Also type checking is set,
+ * if method is not returning promise, compiler will give error.
+ */
+export declare function TraceAsync(options: {
+    operationName?: string;
+    relation: RelationParameterType;
+}): (target: Object, propertyName: string, propertyDesciptor: TypedPropertyDescriptor<AsyncTracedMethod>) => TypedPropertyDescriptor<AsyncTracedMethod>;
 export declare function ChildOfRelation(parentSpan: opentracing.Span, ...args: any[]): Partial<opentracing.SpanOptions>;
 export declare function FollowFromRelation(parentSpan: opentracing.Span, ...args: any[]): Partial<opentracing.SpanOptions>;
 export declare function NewTraceRelation(parentSpan: opentracing.Span, ...args: any[]): Partial<opentracing.SpanOptions>;

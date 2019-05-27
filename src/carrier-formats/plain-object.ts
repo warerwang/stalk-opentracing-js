@@ -2,12 +2,12 @@ import { BasicSpanContext } from '../basic/span-context';
 
 
 export const NAME = 'plainObject';
-export const OBJECT_TRACE_ID_PROPERTY_KEY = '__traceId__';
-export const OBJECT_SPAN_ID_PROPERTY_KEY = '__spanId__';
+export const OBJECT_TRACE_ID_PROPERTY_KEY = '__TRACE_ID__';
+export const OBJECT_SPAN_ID_PROPERTY_KEY = '__SPAN_ID__';
 
 
 /**
- * Triest to inject span context into plain javascript object with specific property keys.
+ * Tries to inject span context into plain javascript object with specific property keys.
  * This method should not throw an error.
  */
 export function inject(spanContext: BasicSpanContext, carrier: any) {

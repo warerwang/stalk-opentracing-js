@@ -7,6 +7,7 @@ import { getComponentName } from './component-name';
  * Some types
  */
 export type TracedMethod = (span: opentracing.Span, ...args: any[]) => any;
+export type AsyncTracedMethod = (span: opentracing.Span, ...args: any[]) => Promise<any>;
 export type RelationHandler = (span: opentracing.Span, ...args: any[]) => Partial<opentracing.SpanOptions>;
 export type RelationParameterType = 'childOf' | 'followsFrom' | 'newTrace' | RelationHandler;
 
@@ -189,6 +190,23 @@ export function Trace(options: {
 
 
 export default Trace;
+
+
+/**
+ * Syntactic sugar `@TraceAsync` decorator for async functions. You can
+ * omit `autoFinish` option, it's enabled by default. Also type checking is set,
+ * if method is not returning promise, compiler will give error.
+ */
+export function TraceAsync(options: {
+    operationName?: string,
+    relation: RelationParameterType
+}) {
+    return Trace({ ...options, autoFinish: true }) as (
+        target: Object,
+        propertyName: string,
+        propertyDesciptor: TypedPropertyDescriptor<AsyncTracedMethod>
+    ) => TypedPropertyDescriptor<AsyncTracedMethod>;
+}
 
 
 export function ChildOfRelation(parentSpan: opentracing.Span, ...args: any[]): Partial<opentracing.SpanOptions> {
