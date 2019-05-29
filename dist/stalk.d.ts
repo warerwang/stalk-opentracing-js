@@ -3,4 +3,5 @@ export * from './stalk/span';
 export * from './stalk/tracer';
 import * as reporters from './reporters/index';
 import * as decorators from './decorators/index';
-export { reporters, decorators };
+import * as formats from './formats/index';
+export { formats, reporters, decorators };

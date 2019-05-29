@@ -3,7 +3,7 @@ import Span from './span';
 import SpanContext from './span-context';
 import BaseReporter from '../reporters/base';
 import * as shortid from 'shortid';
-import * as PlainObjectCarrierFormat from '../carrier-formats/plain-object';
+import { TextMapFormat } from '../formats/text-map';
 
 
 /**
@@ -99,8 +99,9 @@ export class Tracer extends opentracing.Tracer {
      */
     protected _inject(spanContext: SpanContext, format: string, carrier: any) {
         switch (format) {
-            case PlainObjectCarrierFormat.NAME:
-                return PlainObjectCarrierFormat.inject(spanContext, carrier);
+            case opentracing.FORMAT_HTTP_HEADERS:
+            case opentracing.FORMAT_TEXT_MAP:
+                return TextMapFormat.inject(spanContext, carrier);
             default:
                 console.error(`Could not inject context into carrier, unknown format "${format}"`, carrier);
         }
@@ -112,25 +113,15 @@ export class Tracer extends opentracing.Tracer {
      * throw an error, return nil instead. Creating a new trace is not our responsibility.
      */
     protected _extract(format: string, carrier: any): opentracing.SpanContext | null {
-        let traceId: string;
-        let spanId: string;
-
         switch (format) {
-            case PlainObjectCarrierFormat.NAME: {
-                const plainObject = PlainObjectCarrierFormat.extract(carrier);
-                traceId = plainObject.traceId;
-                spanId = plainObject.spanId;
-                break;
+            case opentracing.FORMAT_HTTP_HEADERS:
+            case opentracing.FORMAT_TEXT_MAP: {
+                return TextMapFormat.extract(carrier);
             }
             default: {
                 console.error(`Could not extract context from carrier, unknown carrier format "${format}"`, carrier);
             }
         }
-
-        // If traceId or spanId missing, return null
-        if (!traceId || !spanId) return;
-
-        return new SpanContext(traceId, spanId);
     }
 }
 
