@@ -1,7 +1,7 @@
 import * as opentracing from '../opentracing/index';
 
 
-export class StalkSpanContext extends opentracing.SpanContext {
+export class SpanContext extends opentracing.SpanContext {
     private _traceId: string;
     private _spanId: string;
     private _baggageItems: { [key: string]: string } = {};
@@ -47,4 +47,4 @@ export class StalkSpanContext extends opentracing.SpanContext {
     }
 }
 
-export default StalkSpanContext;
+export default SpanContext;

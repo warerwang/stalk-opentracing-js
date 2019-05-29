@@ -1,15 +1,15 @@
 const expect = require('chai').expect;
-const stalk = require('../');
+const { opentracing, stalk } = require('../');
 
 
 describe('StalkSpan behaviour tests', function() {
-    let tracer = new stalk.StalkTracer();
-    let spanContext = new stalk.StalkSpanContext('xxxTraceIdxxx', 'xxxSpanIdxxx');
+    let tracer = new stalk.Tracer();
+    let spanContext = new stalk.SpanContext('xxxTraceIdxxx', 'xxxSpanIdxxx');
     let span;
 
 
     beforeEach(function() {
-        span = new stalk.StalkSpan(tracer, spanContext);
+        span = new stalk.Span(tracer, spanContext);
     });
 
 
@@ -36,8 +36,8 @@ describe('StalkSpan behaviour tests', function() {
     });
 
     it('should add reference when `.addReference(ref)` called', function() {
-        let parentContext = new stalk.StalkSpanContext('xxxTraceIdxxx', 'xxxParentSpanIdxxx');
-        const ref = new stalk.Reference(stalk.REFERENCE_CHILD_OF, parentContext);
+        let parentContext = new stalk.SpanContext('xxxTraceIdxxx', 'xxxParentSpanIdxxx');
+        const ref = new opentracing.Reference(stalk.REFERENCE_CHILD_OF, parentContext);
         span.addReference(ref);
         const resultRefs = toJSON(span).references;
         expect(resultRefs).to.have.lengthOf(1);

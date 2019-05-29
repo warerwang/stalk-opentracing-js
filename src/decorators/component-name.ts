@@ -2,7 +2,7 @@
  * Property key to be used for storing component name in target's prototype.
  * Symbol() not supported for ES5 :(
  */
-export const ComponentNamePropertyKey = '__COMPONENT_NAME__';
+const ComponentNamePropertyKey = '__COMPONENT_NAME__';
 
 
 /**

@@ -1,6 +1,6 @@
 const chai = require('chai');
 const expect = chai.expect;
-const stalk = require('../../');
+const { opentracing, stalk } = require('../../');
 const { Trace, TraceAsync } = stalk.decorators.Trace;
 const { ComponentName } = stalk.decorators.ComponentName;
 
@@ -12,14 +12,14 @@ describe('Trace Decorator', function() {
 
 
     before(function() {
-        globalTracerBackup = stalk.globalTracer();
-        tracer = new stalk.StalkTracer();
-        stalk.initGlobalTracer(tracer);
+        globalTracerBackup = opentracing.globalTracer();
+        tracer = new stalk.Tracer();
+        opentracing.initGlobalTracer(tracer);
     });
 
 
     after(function() {
-        stalk.initGlobalTracer(globalTracerBackup);
+        opentracing.initGlobalTracer(globalTracerBackup);
     });
 
 
@@ -41,7 +41,7 @@ describe('Trace Decorator', function() {
         expect(span.tracer()).to.equal(tracer);
         expect(resultSpan.operationName).to.equal('some operation');
         expect(Object.keys(resultSpan.tags)).to.have.lengthOf(1);
-        expect(resultSpan.tags[stalk.Tags.COMPONENT]).to.equal('DummyClass');
+        expect(resultSpan.tags[opentracing.Tags.COMPONENT]).to.equal('DummyClass');
     });
 
 
@@ -72,11 +72,11 @@ describe('Trace Decorator', function() {
 
         expect(resultSpanParent.references).to.have.lengthOf(0);
         expect(resultSpanChild.references).to.have.lengthOf(1);
-        expect(resultSpanChild.references[0].type).to.equal(stalk.REFERENCE_CHILD_OF);
+        expect(resultSpanChild.references[0].type).to.equal(opentracing.REFERENCE_CHILD_OF);
         expect(resultSpanChild.references[0].referencedContext.traceId).to.equal(resultSpanParent.context.traceId);
         expect(resultSpanChild.references[0].referencedContext.spanId).to.equal(resultSpanParent.context.spanId);
         expect(resultSpanFollows.references).to.have.lengthOf(1);
-        expect(resultSpanFollows.references[0].type).to.equal(stalk.REFERENCE_FOLLOWS_FROM);
+        expect(resultSpanFollows.references[0].type).to.equal(opentracing.REFERENCE_FOLLOWS_FROM);
         expect(resultSpanFollows.references[0].referencedContext.traceId).to.equal(resultSpanChild.context.traceId);
         expect(resultSpanFollows.references[0].referencedContext.spanId).to.equal(resultSpanChild.context.spanId);
     });

@@ -1,9 +1,4 @@
 /**
- * Property key to be used for storing component name in target's prototype.
- * Symbol() not supported for ES5 :(
- */
-export declare const ComponentNamePropertyKey = "__COMPONENT_NAME__";
-/**
  * A class decorator that adds provided name into class prototype,
  * so that `@Trace()` decorator can extract and use it for span's `component` tag.
  *

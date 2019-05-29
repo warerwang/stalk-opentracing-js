@@ -1,5 +1,5 @@
 const expect = require('chai').expect;
-const stalk = require('../');
+const { opentracing, stalk } = require('../');
 
 
 describe('StalkTracer behaviour tests', function() {
@@ -8,7 +8,7 @@ describe('StalkTracer behaviour tests', function() {
 
 
         beforeEach(function() {
-            tracer = new stalk.StalkTracer();
+            tracer = new stalk.Tracer();
         });
 
 
@@ -45,7 +45,7 @@ describe('StalkTracer behaviour tests', function() {
             expect(resultSpan.startTime).to.equal(now);
             expect(resultSpan.operationName).to.equal('operationName');
             expect(resultSpan.references).to.have.lengthOf(1);
-            expect(resultSpan.references[0].type).to.equal(stalk.REFERENCE_CHILD_OF);
+            expect(resultSpan.references[0].type).to.equal(opentracing.REFERENCE_CHILD_OF);
             expect(resultSpan.references[0].referencedContext.traceId).to.equal(parentSpan.context().toTraceId());
             expect(resultSpan.references[0].referencedContext.spanId).to.equal(parentSpan.context().toSpanId());
             expect(Object.keys(resultSpan.tags)).to.have.lengthOf(2);
@@ -61,8 +61,8 @@ describe('StalkTracer behaviour tests', function() {
 
 
         beforeEach(function() {
-            tracer = new stalk.StalkTracer();
-            reporter = new stalk.BaseReporter();
+            tracer = new stalk.Tracer();
+            reporter = new stalk.reporters.BaseReporter();
         });
 
 

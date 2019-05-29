@@ -1,5 +1,5 @@
 import * as opentracing from '../opentracing/index';
-export declare class StalkSpanContext extends opentracing.SpanContext {
+export declare class SpanContext extends opentracing.SpanContext {
     private _traceId;
     private _spanId;
     private _baggageItems;
@@ -20,4 +20,4 @@ export declare class StalkSpanContext extends opentracing.SpanContext {
         [key: string]: string;
     };
 }
-export default StalkSpanContext;
+export default SpanContext;

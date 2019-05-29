@@ -1,6 +1,6 @@
 import * as opentracing from '../opentracing/index';
-import StalkTracer from './tracer';
-import StalkSpanContext from './span-context';
+import Tracer from './tracer';
+import SpanContext from './span-context';
 export interface ISpanLog {
     fields: {
         [key: string]: any;
@@ -14,7 +14,7 @@ export interface ISpanLog {
  *  - Keeping references of referenced-spans
  *  - Keeping reference of tracer and context
  */
-export declare class StalkSpan extends opentracing.Span {
+export declare class Span extends opentracing.Span {
     private _operationName;
     private _startTime;
     private _finishTime;
@@ -23,11 +23,11 @@ export declare class StalkSpan extends opentracing.Span {
     private _logs;
     private __tracer;
     private __context;
-    constructor(tracer: StalkTracer, context: StalkSpanContext);
+    constructor(tracer: Tracer, context: SpanContext);
     /**
      * Override just for returning tracer's type
      */
-    tracer(): StalkTracer;
+    tracer(): Tracer;
     /**
      * Sets the start time of span. Defaults to `Date.now()`.
      */
@@ -44,7 +44,7 @@ export declare class StalkSpan extends opentracing.Span {
      * Play well with JSON.stringify()
      */
     toJSON(): {
-        context: StalkSpanContext;
+        context: SpanContext;
         operationName: string;
         startTime: number;
         finishTime: number;
@@ -60,11 +60,11 @@ export declare class StalkSpan extends opentracing.Span {
     /**
      * Returns the span context.
      */
-    protected _context(): StalkSpanContext;
+    protected _context(): SpanContext;
     /**
      * Returns the tracer.
      */
-    protected _tracer(): StalkTracer;
+    protected _tracer(): Tracer;
     /**
      * Sets the operation name of span.
      */
@@ -95,4 +95,4 @@ export declare class StalkSpan extends opentracing.Span {
      */
     protected _getBaggageItem(key: string): string | undefined;
 }
-export default StalkSpan;
+export default Span;

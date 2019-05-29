@@ -1,8 +1,8 @@
 import BaseReporter from '../base';
-import StalkSpan, { ISpanLog } from '../../stalk/span';
+import Span, { ISpanLog } from '../../stalk/span';
 
 
-export type LogFilterPredicate = (span: StalkSpan, log: ISpanLog) => boolean;
+type LogFilterPredicate = (span: Span, log: ISpanLog) => boolean;
 
 
 export class LogFilterProxyReporter extends BaseReporter {
@@ -21,23 +21,23 @@ export class LogFilterProxyReporter extends BaseReporter {
     }
 
 
-    recieveSpanCreate(span: StalkSpan) {
+    recieveSpanCreate(span: Span) {
         return this._target.recieveSpanCreate(span);
     }
 
 
-    recieveSpanLog(span: StalkSpan, log: ISpanLog) {
+    recieveSpanLog(span: Span, log: ISpanLog) {
         if (!this.testSpanLog(span, log)) return false;
         return this._target.recieveSpanLog(span, log);
     }
 
 
-    recieveSpanFinish(span: StalkSpan) {
+    recieveSpanFinish(span: Span) {
         return this._target.recieveSpanFinish(span);
     }
 
 
-    testSpanLog(span: StalkSpan, log: ISpanLog) {
+    testSpanLog(span: Span, log: ISpanLog) {
         return this._predicate(span, log);
     }
 

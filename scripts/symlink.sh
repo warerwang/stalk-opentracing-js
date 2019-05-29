@@ -3,7 +3,7 @@ if [ ! -f node.js ]; then
 fi
 
 if [ ! -f node.d.ts ]; then
-    ln -s "./dist/index.node.d.ts" node.d.ts
+    ln -s "./dist/index.d.ts" node.d.ts
 fi
 
 if [ ! -f web.js ]; then
@@ -11,5 +11,5 @@ if [ ! -f web.js ]; then
 fi
 
 if [ ! -f web.d.ts ]; then
-    ln -s "./dist/index.web.d.ts" web.d.ts
+    ln -s "./dist/index.d.ts" web.d.ts
 fi

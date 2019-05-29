@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "",
   "main": "dist/node.js",
-  "types": "dist/index.node.d.ts",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "webpack --mode production",
     "postinstall": "./scripts/symlink.sh",

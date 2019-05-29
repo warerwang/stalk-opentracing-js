@@ -1,6 +1,6 @@
 import * as opentracing from '../opentracing/index';
 import BaseReporter from './base';
-import { StalkSpan, ISpanLog } from '../stalk/span';
+import { Span, ISpanLog } from '../stalk/span';
 
 
 
@@ -39,7 +39,7 @@ export class WinstonReporter extends BaseReporter {
      * Main method to forward logs to `winston` logger.
      * Note to self: `BasicSpan._log()` calls this method.
      */
-    recieveSpanLog(span: StalkSpan, log: ISpanLog) {
+    recieveSpanLog(span: Span, log: ISpanLog) {
         const component = span.getTag(opentracing.Tags.COMPONENT) || 'NO-COMPONENT';
         const level = log.fields.level || 'NO-LEVEL';
         const message = log.fields.message || 'NO-MESSAGE';

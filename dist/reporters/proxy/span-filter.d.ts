@@ -1,14 +1,14 @@
 import BaseReporter from '../base';
-import StalkSpan, { ISpanLog } from '../../stalk/span';
-export declare type SpanFilterPredicate = (span: StalkSpan) => boolean;
+import Span, { ISpanLog } from '../../stalk/span';
+declare type SpanFilterPredicate = (span: Span) => boolean;
 export declare class SpanFilterProxyReporter extends BaseReporter {
     protected _target: BaseReporter;
     protected _predicate: SpanFilterPredicate;
     constructor(targetReporter: BaseReporter, predicate?: SpanFilterPredicate);
-    recieveSpanCreate(span: StalkSpan): false | void;
-    recieveSpanLog(span: StalkSpan, log: ISpanLog): false | void;
-    recieveSpanFinish(span: StalkSpan): false | void;
-    testSpan(span: StalkSpan): boolean;
+    recieveSpanCreate(span: Span): false | void;
+    recieveSpanLog(span: Span, log: ISpanLog): false | void;
+    recieveSpanFinish(span: Span): false | void;
+    testSpan(span: Span): boolean;
     close(): void;
 }
 export default SpanFilterProxyReporter;

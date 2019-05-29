@@ -1,6 +1,6 @@
 import * as opentracing from '../opentracing/index';
-import StalkTracer from './tracer';
-import StalkSpanContext from './span-context';
+import Tracer from './tracer';
+import SpanContext from './span-context';
 
 
 export interface ISpanLog {
@@ -16,7 +16,7 @@ export interface ISpanLog {
  *  - Keeping references of referenced-spans
  *  - Keeping reference of tracer and context
  */
-export class StalkSpan extends opentracing.Span {
+export class Span extends opentracing.Span {
     private _operationName: string;
     private _startTime: number;
     private _finishTime: number;
@@ -24,11 +24,11 @@ export class StalkSpan extends opentracing.Span {
     private _tags: { [key: string]: any } = {};
     private _logs: ISpanLog[] = [];
 
-    private __tracer: StalkTracer;
-    private __context: StalkSpanContext;
+    private __tracer: Tracer;
+    private __context: SpanContext;
 
 
-    constructor(tracer: StalkTracer, context: StalkSpanContext) {
+    constructor(tracer: Tracer, context: SpanContext) {
         super();
         this.__tracer = tracer;
         this.__context = context;
@@ -38,8 +38,8 @@ export class StalkSpan extends opentracing.Span {
     /**
      * Override just for returning tracer's type
      */
-    tracer(): StalkTracer {
-        return super.tracer() as StalkTracer;
+    tracer(): Tracer {
+        return super.tracer() as Tracer;
     }
 
 
@@ -177,4 +177,4 @@ export class StalkSpan extends opentracing.Span {
     }
 }
 
-export default StalkSpan;
+export default Span;

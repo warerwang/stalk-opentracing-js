@@ -1,6 +1,6 @@
 import * as opentracing from '../../opentracing/index';
 import BaseReporter from '../base';
-import StalkSpan from '../../stalk/span';
+import Span from '../../stalk/span';
 import SpanFilterProxyReporter from './span-filter';
 import DebugNamespaceMatcher from '../../utils/debug-namespace-matcher';
 
@@ -23,7 +23,7 @@ export class SpanComponentTagFilterProxyReporter extends SpanFilterProxyReporter
     /**
      * Overriding
      */
-    testSpan(span: StalkSpan) {
+    testSpan(span: Span) {
         return this.matcher.test(span.getTag(opentracing.Tags.COMPONENT));
     }
 }
