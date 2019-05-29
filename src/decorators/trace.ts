@@ -6,10 +6,10 @@ import { getComponentName } from './component-name';
 /**
  * Some types
  */
-export type TracedMethod = (span: opentracing.Span, ...args: any[]) => any;
-export type AsyncTracedMethod = (span: opentracing.Span, ...args: any[]) => Promise<any>;
-export type RelationHandler = (span: opentracing.Span, ...args: any[]) => Partial<opentracing.SpanOptions>;
-export type RelationParameterType = 'childOf' | 'followsFrom' | 'newTrace' | RelationHandler;
+type ArgumentTypes<T> = T extends (...args: infer U ) => infer R ? U: never;
+type ReplaceReturnType<T, TNewReturn> = (...a: ArgumentTypes<T>) => TNewReturn;
+type CustomRelationHandler = (span: opentracing.Span, ...args: any[]) => Partial<opentracing.SpanOptions>;
+type PredefinedRelations = 'childOf' | 'followsFrom' | 'newTrace';
 
 
 /**
@@ -51,11 +51,13 @@ export type RelationParameterType = 'childOf' | 'followsFrom' | 'newTrace' | Rel
  * // Because `multiply` method's trace relation is set to `newTrace`
  * ```
  *
- * `relation` must be set a function as takes the same arguments with the decorated function.
- * It will called before original method and it must be return some part of
- * span options (`opentracing.SpanOptions`) that defines the relation to other spans.
- * There are pre-defined some relations: `childOf`, `followsFrom`, `newTrace`.
- * If you want to extract span context from external communication, you should set your custom relation handler.
+ * `relation` must be set to a string. It can be one of pre-defined some relations: `childOf`,
+ * `followsFrom`, `newTrace`, or it can be `custom`. If `custom` is selected, you should
+ * pass another `handler` option which is a function takes the same arguments with the decorated function.
+ * It will called before original method and it must be return some part of span options
+ * (`opentracing.SpanOptions`) that defines the relation to other spans.
+ * If you want to extract span context from some sort of external communication,
+ * you should set your custom relation handler.
  *
  * If `autoFinish` is set true, return value of the method will be checked. If it is promise-like
  * object, we will wait until it settles. If it's resolved, current span will be finished normally. If it's
@@ -84,30 +86,48 @@ export type RelationParameterType = 'childOf' | 'followsFrom' | 'newTrace' | Rel
  * }
  * ```
  */
-export function Trace(options: {
+export function Trace<T extends CustomRelationHandler>(options: {
     operationName?: string,
-    relation: RelationParameterType,
+    relation: PredefinedRelations,
+    autoFinish: boolean
+} | {
+    operationName?: string,
+    relation: 'custom',
+    handler: T,
     autoFinish: boolean
 }) {
+    // Handler method should be same signature with original traced method,
+    // but it should return partial of opentracing.SpanOptions.
+    // As far as I've tried, we can not force handler's signature according to
+    // original method. So, we're going from the other way.
+    type TracedMethod = ReplaceReturnType<T, any>;
+
     return (
-        target: Object,
+        target: any,
         propertyName: string,
         propertyDesciptor: TypedPropertyDescriptor<TracedMethod>
     ) => {
         const originalMethod = propertyDesciptor.value;
         options.operationName = options.operationName || propertyName;
 
+        const optionsAs = options as {
+            operationName?: string,
+            relation: string,
+            handler?: CustomRelationHandler,
+            autoFinish?: boolean
+        };
+
         // Pre-defined relations
-        if (typeof options.relation == 'string') {
+        if (options.relation != 'custom') {
             switch (options.relation) {
                 case 'childOf':
-                    options.relation = ChildOfRelation;
+                    optionsAs.handler = ChildOfRelationHandler;
                     break;
                 case 'followsFrom':
-                    options.relation = FollowFromRelation;
+                    optionsAs.handler = FollowFromRelationHandler;
                     break;
                 case 'newTrace':
-                    options.relation = NewTraceRelation;
+                    optionsAs.handler = NewTraceRelationHandler;
                     break;
                 default:
                     throw new Error(`Unexpected relation type "${options.relation}"`);
@@ -121,13 +141,13 @@ export function Trace(options: {
             let newSpanOptions: opentracing.SpanOptions = {};
 
             try {
-                const handlerResultOptions = (options.relation as RelationHandler).apply(this, args);
+                const handlerResultOptions = optionsAs.handler.apply(this, args);
                 newSpanOptions = {
                     ...newSpanOptions,
                     ...handlerResultOptions
                 };
             } catch (err) {
-                console.error(`Unexpected error in traces method "${options.operationName}"s relation handler`);
+                console.error(`Unexpected error in traced method "${options.operationName}"s relation handler`);
                 throw err;
             }
 
@@ -136,7 +156,7 @@ export function Trace(options: {
             if (componentName) {
                 newSpanOptions.tags = {
                     [opentracing.Tags.COMPONENT]: componentName,
-                    ...newSpanOptions // Prepare result tags have higher priority
+                    ...newSpanOptions // The tags that handler set, can override component
                 };
             }
 
@@ -144,7 +164,7 @@ export function Trace(options: {
             const newSpan = tracer.startSpan(options.operationName, newSpanOptions);
 
             // Replace the first argument with new context
-            args.splice(0, 1, newSpan);
+            args.splice(0, 1, newSpan); // TODO: What if args == [] ???
 
             // Execute original method
             try {
@@ -197,19 +217,26 @@ export default Trace;
  * omit `autoFinish` option, it's enabled by default. Also type checking is set,
  * if method is not returning promise, compiler will give error.
  */
-export function TraceAsync(options: {
+export function TraceAsync<T extends CustomRelationHandler>(options: {
     operationName?: string,
-    relation: RelationParameterType
+    relation: PredefinedRelations
+} | {
+    operationName?: string,
+    relation: 'custom',
+    handler: T
 }) {
+    // Original method should return a promise
+    type AsyncTracedMethod = ReplaceReturnType<T, Promise<any>>;
+
     return Trace({ ...options, autoFinish: true }) as (
-        target: Object,
+        target: any,
         propertyName: string,
         propertyDesciptor: TypedPropertyDescriptor<AsyncTracedMethod>
     ) => TypedPropertyDescriptor<AsyncTracedMethod>;
 }
 
 
-export function ChildOfRelation(parentSpan: opentracing.Span, ...args: any[]): Partial<opentracing.SpanOptions> {
+export function ChildOfRelationHandler(parentSpan: opentracing.Span, ...args: any[]): Partial<opentracing.SpanOptions> {
     if (!parentSpan) {
         throw new Error(`Traced method's first argument must be a span`);
     }
@@ -217,7 +244,7 @@ export function ChildOfRelation(parentSpan: opentracing.Span, ...args: any[]): P
 }
 
 
-export function FollowFromRelation(parentSpan: opentracing.Span, ...args: any[]): Partial<opentracing.SpanOptions> {
+export function FollowFromRelationHandler(parentSpan: opentracing.Span, ...args: any[]): Partial<opentracing.SpanOptions> {
     if (!parentSpan) {
         throw new Error(`Traced method's first argument must be a span`);
     }
@@ -225,7 +252,7 @@ export function FollowFromRelation(parentSpan: opentracing.Span, ...args: any[])
 }
 
 
-export function NewTraceRelation(parentSpan: opentracing.Span, ...args: any[]): Partial<opentracing.SpanOptions> {
+export function NewTraceRelationHandler(parentSpan: opentracing.Span, ...args: any[]): Partial<opentracing.SpanOptions> {
     // Parent span is ignored
     return {};
 }

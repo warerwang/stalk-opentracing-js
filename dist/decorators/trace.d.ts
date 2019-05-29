@@ -2,10 +2,10 @@ import * as opentracing from '../opentracing/index';
 /**
  * Some types
  */
-export declare type TracedMethod = (span: opentracing.Span, ...args: any[]) => any;
-export declare type AsyncTracedMethod = (span: opentracing.Span, ...args: any[]) => Promise<any>;
-export declare type RelationHandler = (span: opentracing.Span, ...args: any[]) => Partial<opentracing.SpanOptions>;
-export declare type RelationParameterType = 'childOf' | 'followsFrom' | 'newTrace' | RelationHandler;
+declare type ArgumentTypes<T> = T extends (...args: infer U) => infer R ? U : never;
+declare type ReplaceReturnType<T, TNewReturn> = (...a: ArgumentTypes<T>) => TNewReturn;
+declare type CustomRelationHandler = (span: opentracing.Span, ...args: any[]) => Partial<opentracing.SpanOptions>;
+declare type PredefinedRelations = 'childOf' | 'followsFrom' | 'newTrace';
 /**
  * Main `@Trace()` decorator for class methods to be traced. Due to typescript decorator
  * restrictions, we cannot apply this decorator to normal functions :/
@@ -45,11 +45,13 @@ export declare type RelationParameterType = 'childOf' | 'followsFrom' | 'newTrac
  * // Because `multiply` method's trace relation is set to `newTrace`
  * ```
  *
- * `relation` must be set a function as takes the same arguments with the decorated function.
- * It will called before original method and it must be return some part of
- * span options (`opentracing.SpanOptions`) that defines the relation to other spans.
- * There are pre-defined some relations: `childOf`, `followsFrom`, `newTrace`.
- * If you want to extract span context from external communication, you should set your custom relation handler.
+ * `relation` must be set to a string. It can be one of pre-defined some relations: `childOf`,
+ * `followsFrom`, `newTrace`, or it can be `custom`. If `custom` is selected, you should
+ * pass another `handler` option which is a function takes the same arguments with the decorated function.
+ * It will called before original method and it must be return some part of span options
+ * (`opentracing.SpanOptions`) that defines the relation to other spans.
+ * If you want to extract span context from some sort of external communication,
+ * you should set your custom relation handler.
  *
  * If `autoFinish` is set true, return value of the method will be checked. If it is promise-like
  * object, we will wait until it settles. If it's resolved, current span will be finished normally. If it's
@@ -78,21 +80,30 @@ export declare type RelationParameterType = 'childOf' | 'followsFrom' | 'newTrac
  * }
  * ```
  */
-export declare function Trace(options: {
+export declare function Trace<T extends CustomRelationHandler>(options: {
     operationName?: string;
-    relation: RelationParameterType;
+    relation: PredefinedRelations;
     autoFinish: boolean;
-}): (target: Object, propertyName: string, propertyDesciptor: TypedPropertyDescriptor<TracedMethod>) => TypedPropertyDescriptor<TracedMethod>;
+} | {
+    operationName?: string;
+    relation: 'custom';
+    handler: T;
+    autoFinish: boolean;
+}): (target: any, propertyName: string, propertyDesciptor: TypedPropertyDescriptor<ReplaceReturnType<T, any>>) => TypedPropertyDescriptor<ReplaceReturnType<T, any>>;
 export default Trace;
 /**
  * Syntactic sugar `@TraceAsync` decorator for async functions. You can
  * omit `autoFinish` option, it's enabled by default. Also type checking is set,
  * if method is not returning promise, compiler will give error.
  */
-export declare function TraceAsync(options: {
+export declare function TraceAsync<T extends CustomRelationHandler>(options: {
     operationName?: string;
-    relation: RelationParameterType;
-}): (target: Object, propertyName: string, propertyDesciptor: TypedPropertyDescriptor<AsyncTracedMethod>) => TypedPropertyDescriptor<AsyncTracedMethod>;
-export declare function ChildOfRelation(parentSpan: opentracing.Span, ...args: any[]): Partial<opentracing.SpanOptions>;
-export declare function FollowFromRelation(parentSpan: opentracing.Span, ...args: any[]): Partial<opentracing.SpanOptions>;
-export declare function NewTraceRelation(parentSpan: opentracing.Span, ...args: any[]): Partial<opentracing.SpanOptions>;
+    relation: PredefinedRelations;
+} | {
+    operationName?: string;
+    relation: 'custom';
+    handler: T;
+}): (target: any, propertyName: string, propertyDesciptor: TypedPropertyDescriptor<ReplaceReturnType<T, Promise<any>>>) => TypedPropertyDescriptor<ReplaceReturnType<T, Promise<any>>>;
+export declare function ChildOfRelationHandler(parentSpan: opentracing.Span, ...args: any[]): Partial<opentracing.SpanOptions>;
+export declare function FollowFromRelationHandler(parentSpan: opentracing.Span, ...args: any[]): Partial<opentracing.SpanOptions>;
+export declare function NewTraceRelationHandler(parentSpan: opentracing.Span, ...args: any[]): Partial<opentracing.SpanOptions>;
