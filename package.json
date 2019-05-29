@@ -7,21 +7,24 @@
   "scripts": {
     "build": "webpack --mode production",
     "postinstall": "./scripts/symlink.sh",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/debug": "4.1.4",
-    "@types/lodash": "4.14.132",
-    "ts-loader": "6.0.1",
-    "typescript": "3.4.5",
-    "webpack": "4.32.2",
-    "webpack-cli": "3.3.2"
+    "@types/debug": "^4.1.4",
+    "@types/lodash": "^4.14.132",
+    "chai": "^4.2.0",
+    "mocha": "^6.1.4",
+    "opentracing": "0.14.3",
+    "ts-loader": "^6.0.1",
+    "typescript": "^3.4.5",
+    "webpack": "^4.32.2",
+    "webpack-cli": "^3.3.2"
   },
   "dependencies": {
-    "lodash": "4.17.11",
-    "shortid": "2.2.14"
+    "lodash": "^4.17.11",
+    "shortid": "^2.2.14"
   }
 }
