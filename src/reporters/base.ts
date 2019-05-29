@@ -1,5 +1,5 @@
 import * as opentracing from '../opentracing/index';
-import { ISpanLog } from '../basic/span';
+import { ISpanLog } from '../stalk/span';
 
 
 /**

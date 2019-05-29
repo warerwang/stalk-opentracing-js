@@ -1,20 +1,20 @@
 import * as opentracing from '../opentracing/index';
 import * as Noop from '../opentracing/noop';
-import BasicSpan from './span';
-import BasicSpanContext from './span-context';
+import StalkSpan from './span';
+import StalkSpanContext from './span-context';
 import BaseReporter from '../reporters/base';
 import * as shortid from 'shortid';
 import * as PlainObjectCarrierFormat from '../carrier-formats/plain-object';
 
 
 /**
- * BasicTracer inherits opentracing's noop class, with the
+ * StalkTracer inherits opentracing's noop class, with the
  * implementation of data-structure stuff and reporter interface.
- * Please note that this BasicTracer does not record any spans, hoping
+ * Please note that this StalkTracer does not record any spans, hoping
  * to be garbage-collected by js engine. The job of recording and reporting
  * spans is left to reporters.
  */
-export class BasicTracer extends opentracing.Tracer {
+export class StalkTracer extends opentracing.Tracer {
     /**
      * Reporter instances to report when a span is created.
      */
@@ -48,8 +48,8 @@ export class BasicTracer extends opentracing.Tracer {
     /**
      * Overridden just for returning span's type.
      */
-    startSpan(name: string, options: opentracing.SpanOptions = {}): BasicSpan {
-        return super.startSpan(name, options) as BasicSpan;
+    startSpan(name: string, options: opentracing.SpanOptions = {}): StalkSpan {
+        return super.startSpan(name, options) as StalkSpan;
     }
 
 
@@ -67,10 +67,10 @@ export class BasicTracer extends opentracing.Tracer {
         const firstRef = fields.references ? fields.references[0] : null;
         const traceId = firstRef ? firstRef.referencedContext().toTraceId() : shortid.generate();
         const spanId = shortid.generate();
-        const spanContext = new BasicSpanContext(traceId, spanId);
+        const spanContext = new StalkSpanContext(traceId, spanId);
 
         // Create a span instance from `this.spanClass` class.
-        const span = new BasicSpan(this, spanContext);
+        const span = new StalkSpan(this, spanContext);
         span.setOperationName(name);
         if (fields.tags) span.addTags(fields.tags);
 
@@ -96,7 +96,7 @@ export class BasicTracer extends opentracing.Tracer {
     /**
      * Tries to inject given span context into carrier. This method should not throw an error.
      */
-    protected _inject(spanContext: BasicSpanContext, format: string, carrier: any) {
+    protected _inject(spanContext: StalkSpanContext, format: string, carrier: any) {
         switch (format) {
             case PlainObjectCarrierFormat.NAME:
                 return PlainObjectCarrierFormat.inject(spanContext, carrier);
@@ -129,8 +129,8 @@ export class BasicTracer extends opentracing.Tracer {
         // If traceId or spanId missing, return null
         if (!traceId || !spanId) return;
 
-        return new BasicSpanContext(traceId, spanId);
+        return new StalkSpanContext(traceId, spanId);
     }
 }
 
-export default BasicTracer;
+export default StalkTracer;

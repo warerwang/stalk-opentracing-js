@@ -1,7 +1,6 @@
 import * as opentracing from '../opentracing/index';
-import BasicTracer from './tracer';
-import BasicSpanContext from './span-context';
-import BaseReporter from '../reporters/base';
+import StalkTracer from './tracer';
+import StalkSpanContext from './span-context';
 
 
 export interface ISpanLog {
@@ -11,13 +10,13 @@ export interface ISpanLog {
 
 
 /**
- * BasicSpan inherits opentracing's noop span, with the implementation
+ * StalkSpan inherits opentracing's noop span, with the implementation
  * of following functionalities:
  *  - Keeping data (operation name, start & finish time, tags and logs)
  *  - Keeping references of referenced-spans
  *  - Keeping reference of tracer and context
  */
-export class BasicSpan extends opentracing.Span {
+export class StalkSpan extends opentracing.Span {
     private _operationName: string;
     private _startTime: number;
     private _finishTime: number;
@@ -25,11 +24,11 @@ export class BasicSpan extends opentracing.Span {
     private _tags: { [key: string]: any } = {};
     private _logs: ISpanLog[] = [];
 
-    private __tracer: BasicTracer;
-    private __context: BasicSpanContext;
+    private __tracer: StalkTracer;
+    private __context: StalkSpanContext;
 
 
-    constructor(tracer: BasicTracer, context: BasicSpanContext) {
+    constructor(tracer: StalkTracer, context: StalkSpanContext) {
         super();
         this.__tracer = tracer;
         this.__context = context;
@@ -39,8 +38,8 @@ export class BasicSpan extends opentracing.Span {
     /**
      * Override just for returning tracer's type
      */
-    tracer(): BasicTracer {
-        return super.tracer() as BasicTracer;
+    tracer(): StalkTracer {
+        return super.tracer() as StalkTracer;
     }
 
 
@@ -143,4 +142,4 @@ export class BasicSpan extends opentracing.Span {
     }
 }
 
-export default BasicSpan;
+export default StalkSpan;

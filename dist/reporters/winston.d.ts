@@ -1,5 +1,5 @@
 import BaseReporter from './base';
-import { BasicSpan, ISpanLog } from '../basic/span';
+import { StalkSpan, ISpanLog } from '../stalk/span';
 /**
  * A reporter that forwards span logs to `winston` logger instance. All the winston
  * transporting stuff must be set before using this reporter.
@@ -27,7 +27,7 @@ export declare class WinstonReporter extends BaseReporter {
      * Main method to forward logs to `winston` logger.
      * Note to self: `BasicSpan._log()` calls this method.
      */
-    recieveSpanLog(span: BasicSpan, log: ISpanLog): void;
+    recieveSpanLog(span: StalkSpan, log: ISpanLog): void;
     close(): void;
 }
 export default WinstonReporter;

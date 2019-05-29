@@ -1,10 +1,11 @@
 {
-  "name": "tracing",
+  "name": "stalk-client",
   "version": "0.0.0",
   "description": "",
   "main": "dist/node.js",
   "types": "dist/index.node.d.ts",
   "scripts": {
+    "build": "webpack --mode production",
     "postinstall": "./scripts/symlink.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

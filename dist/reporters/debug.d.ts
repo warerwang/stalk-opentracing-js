@@ -1,5 +1,5 @@
 import BaseReporter from './base';
-import { BasicSpan, ISpanLog } from '../basic/span';
+import { StalkSpan, ISpanLog } from '../stalk/span';
 /**
  * A reporter that proxies span logs to `debug` package.
  * Span's `component` tag is used for debug package's
@@ -27,7 +27,7 @@ export declare class DebugReporter extends BaseReporter {
      * Main method forward logs to `debug` package.
      * Note to self: `BasicSpan._log()` calls this method.
      */
-    recieveSpanLog(span: BasicSpan, log: ISpanLog): void;
+    recieveSpanLog(span: StalkSpan, log: ISpanLog): void;
     close(): void;
 }
 export default DebugReporter;

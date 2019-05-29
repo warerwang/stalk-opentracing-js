@@ -1,5 +1,5 @@
 import * as opentracing from '../opentracing/index';
-import { ISpanLog } from '../basic/span';
+import { ISpanLog } from '../stalk/span';
 /**
  * Base reporter class and also behaves like no-op reporter.
  * Child classes should first set `accepts` property to specify

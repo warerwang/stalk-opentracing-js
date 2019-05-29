@@ -1,5 +1,5 @@
 import BaseReporter from '../base';
-import BasicSpan, { ISpanLog } from '../../basic/span';
+import StalkSpan, { ISpanLog } from '../../stalk/span';
 import LogFilterProxyReporter from './log-filter';
 import { SpanLoggerLogLevel } from '../../opentracing/span-logger';
 
@@ -28,7 +28,7 @@ export class LogLevelFilterProxyReporter extends LogFilterProxyReporter {
     }
 
 
-    testSpanLog(span: BasicSpan, log: ISpanLog) {
+    testSpanLog(span: StalkSpan, log: ISpanLog) {
         return LOG_LEVEL_PRIORITY[log.fields.level] <= LOG_LEVEL_PRIORITY[this._logLevel];
     }
 }

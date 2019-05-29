@@ -1,6 +1,6 @@
 import * as opentracing from '../opentracing/index';
 import BaseReporter from './base';
-import { BasicSpan, ISpanLog } from '../basic/span';
+import { StalkSpan, ISpanLog } from '../stalk/span';
 
 
 
@@ -40,7 +40,7 @@ export class DebugReporter extends BaseReporter {
      * Main method forward logs to `debug` package.
      * Note to self: `BasicSpan._log()` calls this method.
      */
-    recieveSpanLog(span: BasicSpan, log: ISpanLog) {
+    recieveSpanLog(span: StalkSpan, log: ISpanLog) {
         // Must be string, or debug throws an error
         const component = span.getTag(opentracing.Tags.COMPONENT) || 'NO-COMPONENT';
 

@@ -1,4 +1,4 @@
-import { BasicSpanContext } from '../basic/span-context';
+import { StalkSpanContext } from '../stalk/span-context';
 
 
 export const NAME = 'plainObject';
@@ -10,7 +10,7 @@ export const OBJECT_SPAN_ID_PROPERTY_KEY = '__SPAN_ID__';
  * Tries to inject span context into plain javascript object with specific property keys.
  * This method should not throw an error.
  */
-export function inject(spanContext: BasicSpanContext, carrier: any) {
+export function inject(spanContext: StalkSpanContext, carrier: any) {
     if (typeof carrier != 'object') {
         console.error(`Could not inject context to plain object, carrier is not object.`, carrier);
     } else {

@@ -1,9 +1,8 @@
-import * as opentracing from '../../opentracing/index';
 import BaseReporter from '../base';
-import BasicSpan, { ISpanLog } from '../../basic/span';
+import StalkSpan, { ISpanLog } from '../../stalk/span';
 
 
-export type SpanFilterPredicate = (span: BasicSpan) => boolean;
+export type SpanFilterPredicate = (span: StalkSpan) => boolean;
 
 
 export class SpanFilterProxyReporter extends BaseReporter {
@@ -22,25 +21,25 @@ export class SpanFilterProxyReporter extends BaseReporter {
     }
 
 
-    recieveSpanCreate(span: BasicSpan) {
+    recieveSpanCreate(span: StalkSpan) {
         if (!this.testSpan(span)) return false;
         return this._target.recieveSpanCreate(span);
     }
 
 
-    recieveSpanLog(span: BasicSpan, log: ISpanLog) {
+    recieveSpanLog(span: StalkSpan, log: ISpanLog) {
         if (!this.testSpan(span)) return false;
         return this._target.recieveSpanLog(span, log);
     }
 
 
-    recieveSpanFinish(span: BasicSpan) {
+    recieveSpanFinish(span: StalkSpan) {
         if (!this.testSpan(span)) return false;
         return this._target.recieveSpanFinish(span);
     }
 
 
-    testSpan(span: BasicSpan) {
+    testSpan(span: StalkSpan) {
         return this._predicate(span);
     }
 

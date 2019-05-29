@@ -1,5 +1,5 @@
 import BaseReporter from '../base';
-import BasicSpan from '../../basic/span';
+import StalkSpan from '../../stalk/span';
 import SpanFilterProxyReporter from './span-filter';
 export declare class SpanComponentTagFilterProxyReporter extends SpanFilterProxyReporter {
     private matcher;
@@ -8,6 +8,6 @@ export declare class SpanComponentTagFilterProxyReporter extends SpanFilterProxy
     /**
      * Overriding
      */
-    testSpan(span: BasicSpan): boolean;
+    testSpan(span: StalkSpan): boolean;
 }
 export default SpanComponentTagFilterProxyReporter;

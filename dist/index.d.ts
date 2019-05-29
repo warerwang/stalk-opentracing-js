@@ -1,6 +1,6 @@
 export * from './opentracing/index';
-export { BasicSpan } from './basic/span';
-export { BasicTracer } from './basic/tracer';
+export { StalkSpan } from './stalk/span';
+export { StalkTracer } from './stalk/tracer';
 export { BaseReporter } from './reporters/base';
 export { DebugReporter } from './reporters/debug';
 export { WinstonReporter } from './reporters/winston';
