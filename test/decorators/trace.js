@@ -2,6 +2,7 @@ const chai = require('chai');
 const expect = chai.expect;
 const stalk = require('../../');
 const { Trace, TraceAsync } = stalk.decorators.Trace;
+const { ComponentName } = stalk.decorators.ComponentName;
 
 
 
@@ -22,12 +23,13 @@ describe('Trace Decorator', function() {
     });
 
 
-    it('should use global tracer and create a span with operation name', function() {
+    it('should use global tracer and create a span with operation name and set tags from @ComponentName() decorator', function() {
         const DummyClass = class {
             method(span) {
                 return span;
             }
         };
+        ComponentName('DummyClass')(DummyClass);
         decorateTrace(DummyClass.prototype, 'method', {
             operationName: 'some operation',
             relation: 'newTrace',
@@ -35,8 +37,11 @@ describe('Trace Decorator', function() {
         });
         const ins = new DummyClass();
         const span = ins.method();
+        const resultSpan = toJSON(span);
         expect(span.tracer()).to.equal(tracer);
-        expect(toJSON(span).operationName).to.equal('some operation');
+        expect(resultSpan.operationName).to.equal('some operation');
+        expect(Object.keys(resultSpan.tags)).to.have.lengthOf(1);
+        expect(resultSpan.tags[stalk.Tags.COMPONENT]).to.equal('DummyClass');
     });
 
 
