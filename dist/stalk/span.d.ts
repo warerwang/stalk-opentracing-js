@@ -86,5 +86,13 @@ export declare class StalkSpan extends opentracing.Span {
      * Finishes span. Defaults to `Date.now()`.
      */
     protected _finish(finishTime?: number): void;
+    /**
+     * Sets a baggage item.
+     */
+    protected _setBaggageItem(key: string, value: string): void;
+    /**
+     * Gets a baggage item
+     */
+    protected _getBaggageItem(key: string): string | undefined;
 }
 export default StalkSpan;

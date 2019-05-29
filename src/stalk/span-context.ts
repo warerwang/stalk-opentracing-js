@@ -4,6 +4,7 @@ import * as opentracing from '../opentracing/index';
 export class StalkSpanContext extends opentracing.SpanContext {
     private _traceId: string;
     private _spanId: string;
+    private _baggageItems: { [key: string]: string } = {};
 
 
     constructor(traceId: string, spanId: string) {
@@ -27,8 +28,22 @@ export class StalkSpanContext extends opentracing.SpanContext {
     toJSON() {
         return {
             traceId: this._traceId,
-            spanId: this._spanId
+            spanId: this._spanId,
+            baggageItems: this._baggageItems
         }
+    }
+
+
+    addBaggageItems(items: { [key: string]: string }) {
+        this._baggageItems = {
+            ...this._baggageItems,
+            ...items
+        }
+    }
+
+
+    get baggageItems() {
+        return this._baggageItems;
     }
 }
 

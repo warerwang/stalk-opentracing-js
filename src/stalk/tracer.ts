@@ -65,9 +65,11 @@ export class StalkTracer extends opentracing.Tracer {
         // Extract trace id from first reference.
         // If it doesn't exists, start a new trace
         const firstRef = fields.references ? fields.references[0] : null;
-        const traceId = firstRef ? firstRef.referencedContext().toTraceId() : shortid.generate();
+        const firstRefContext = firstRef ? firstRef.referencedContext() as StalkSpanContext: null;
+        const traceId = firstRefContext ? firstRefContext.toTraceId() : shortid.generate();
         const spanId = shortid.generate();
         const spanContext = new StalkSpanContext(traceId, spanId);
+        if (firstRefContext && firstRefContext.baggageItems) spanContext.addBaggageItems(firstRefContext.baggageItems);
 
         // Create a span instance from `this.spanClass` class.
         const span = new StalkSpan(this, spanContext);

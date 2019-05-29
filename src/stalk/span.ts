@@ -159,6 +159,22 @@ export class StalkSpan extends opentracing.Span {
             }
         });
     }
+
+
+    /**
+     * Sets a baggage item.
+     */
+    protected _setBaggageItem(key: string, value: string): void {
+        this.__context.addBaggageItems({ [key]: value });
+    }
+
+
+    /**
+     * Gets a baggage item
+     */
+    protected _getBaggageItem(key: string): string | undefined {
+        return this.__context.baggageItems[key];
+    }
 }
 
 export default StalkSpan;
