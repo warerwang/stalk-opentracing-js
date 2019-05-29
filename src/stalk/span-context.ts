@@ -22,6 +22,14 @@ export class StalkSpanContext extends opentracing.SpanContext {
     toSpanId() {
         return this._spanId;
     }
+
+
+    toJSON() {
+        return {
+            traceId: this._traceId,
+            spanId: this._spanId
+        }
+    }
 }
 
 export default StalkSpanContext;

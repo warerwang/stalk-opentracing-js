@@ -1,5 +1,6 @@
 export * from './opentracing/index';
 
+export { StalkSpanContext } from './stalk/span-context';
 export { StalkSpan } from './stalk/span';
 export { StalkTracer } from './stalk/tracer';
 

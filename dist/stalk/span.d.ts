@@ -41,6 +41,23 @@ export declare class StalkSpan extends opentracing.Span {
      */
     getTag(key: string): any;
     /**
+     * Play well with JSON.stringify()
+     */
+    toJSON(): {
+        context: StalkSpanContext;
+        operationName: string;
+        startTime: number;
+        finishTime: number;
+        references: {
+            type: string;
+            referencedContext: opentracing.SpanContext;
+        }[];
+        tags: {
+            [key: string]: any;
+        };
+        logs: ISpanLog[];
+    };
+    /**
      * Returns the span context.
      */
     protected _context(): StalkSpanContext;

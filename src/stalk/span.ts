@@ -67,6 +67,25 @@ export class StalkSpan extends opentracing.Span {
     }
 
 
+    /**
+     * Play well with JSON.stringify()
+     */
+    toJSON() {
+        return {
+            context: this.__context,
+            operationName: this._operationName,
+            startTime: this._startTime,
+            finishTime: this._finishTime,
+            references: this._references.map((r) => ({
+                type: r.type(),
+                referencedContext: r.referencedContext() // TODO: If referenced context is not stalk-span-context?
+            })),
+            tags: this._tags,
+            logs: this._logs
+        };
+    }
+
+
     ///////////////////////////////////////////
     // Override opentracing internal methods //
     ///////////////////////////////////////////

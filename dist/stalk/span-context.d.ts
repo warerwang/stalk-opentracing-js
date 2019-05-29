@@ -5,5 +5,9 @@ export declare class StalkSpanContext extends opentracing.SpanContext {
     constructor(traceId: string, spanId: string);
     toTraceId(): string;
     toSpanId(): string;
+    toJSON(): {
+        traceId: string;
+        spanId: string;
+    };
 }
 export default StalkSpanContext;
