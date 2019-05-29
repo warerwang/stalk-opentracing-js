@@ -32,7 +32,7 @@ export default class SpanLogger {
     }
 
 
-    error(message: string, payload?: any) {
+    error(message: string, ...payload: any[]) {
         this._span.log({
             level: SpanLoggerLogLevel.ERROR, message, payload,
             // Conform opentracing conventions:
@@ -42,22 +42,22 @@ export default class SpanLogger {
     }
 
 
-    warn(message: string, payload?: any) {
+    warn(message: string, ...payload: any[]) {
         this._span.log({ level: SpanLoggerLogLevel.WARN, message, payload });
     }
 
 
-    info(message: string, payload?: any) {
+    info(message: string, ...payload: any[]) {
         this._span.log({ level: SpanLoggerLogLevel.INFO, message, payload });
     }
 
 
-    debug(message: string, payload?: any) {
+    debug(message: string, ...payload: any[]) {
         this._span.log({ level: SpanLoggerLogLevel.DEBUG, message, payload });
     }
 
 
-    silly(message: string, payload?: any) {
+    silly(message: string, ...payload: any[]) {
         this._span.log({ level: SpanLoggerLogLevel.SILLY, message, payload });
     }
 }

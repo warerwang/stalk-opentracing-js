@@ -54,7 +54,7 @@ export class DebugReporter extends BaseReporter {
 
         // Prevent printing null/undefined
         if (log.fields.payload) {
-            debugInstance(`[${level}] ${message}`, log.fields.payload);
+            debugInstance(`[${level}] ${message}`, ...log.fields.payload);
         } else {
             debugInstance(`[${level}] ${message}`);
         }

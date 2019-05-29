@@ -20,9 +20,9 @@ export interface ISpanLoggerLogFields {
 export default class SpanLogger {
     private _span;
     constructor(span: Span);
-    error(message: string, payload?: any): void;
-    warn(message: string, payload?: any): void;
-    info(message: string, payload?: any): void;
-    debug(message: string, payload?: any): void;
-    silly(message: string, payload?: any): void;
+    error(message: string, ...payload: any[]): void;
+    warn(message: string, ...payload: any[]): void;
+    info(message: string, ...payload: any[]): void;
+    debug(message: string, ...payload: any[]): void;
+    silly(message: string, ...payload: any[]): void;
 }
