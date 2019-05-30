@@ -10,11 +10,19 @@ import BaseReporter from '../reporters/base';
  * spans is left to reporters.
  */
 export declare class Tracer extends opentracing.Tracer {
+    /** The constant tags that will be added to all child spans */
+    private _tags;
     /**
      * Reporter instances to report when a span is created.
      */
     protected _reporters: BaseReporter[];
     readonly reporters: BaseReporter[];
+    /**
+     * Updates the constant tags with Object.assign fashion.
+     */
+    addTags(tags: {
+        [key: string]: string;
+    }): void;
     /**
      * Adds a reporter.
      */

@@ -14,11 +14,26 @@ import { TextMapFormat } from '../formats/text-map';
  * spans is left to reporters.
  */
 export class Tracer extends opentracing.Tracer {
+    /** The constant tags that will be added to all child spans */
+    private _tags: { [key: string]: string } = {};
+
+
     /**
      * Reporter instances to report when a span is created.
      */
     protected _reporters: BaseReporter[] = [];
     get reporters() { return this._reporters; }
+
+
+    /**
+     * Updates the constant tags with Object.assign fashion.
+     */
+    addTags(tags: { [key: string]: string }) {
+        this._tags = {
+            ...this._tags,
+            ...tags
+        };
+    }
 
 
     /**
@@ -73,6 +88,7 @@ export class Tracer extends opentracing.Tracer {
         // Create a span instance from `this.spanClass` class.
         const span = new Span(this, spanContext);
         span.setOperationName(name);
+        span.addTags(this._tags);
         if (fields.tags) span.addTags(fields.tags);
 
         if (fields.references) {
