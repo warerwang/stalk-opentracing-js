@@ -1,3 +1,3 @@
 import * as Trace from './trace';
-import * as ComponentName from './component-name';
-export { Trace, ComponentName };
+import * as Tag from './tag';
+export { Trace, Tag };

@@ -2,7 +2,7 @@ const chai = require('chai');
 const expect = chai.expect;
 const { opentracing, stalk } = require('../../');
 const { Trace, TraceAsync } = stalk.decorators.Trace;
-const { ComponentName } = stalk.decorators.ComponentName;
+const { Component } = stalk.decorators.Tag;
 
 
 
@@ -23,13 +23,13 @@ describe('Trace Decorator', function() {
     });
 
 
-    it('should use global tracer and create a span with operation name and set tags from @ComponentName() decorator', function() {
+    it('should use global tracer and create a span with operation name and set tags from @Component() decorator', function() {
         const DummyClass = class {
             method(span) {
                 return span;
             }
         };
-        ComponentName('DummyClass')(DummyClass);
+        Component('DummyClass')(DummyClass);
         decorateTrace(DummyClass.prototype, 'method', {
             operationName: 'some operation',
             relation: 'newTrace',

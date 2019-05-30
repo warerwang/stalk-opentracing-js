@@ -1,5 +1,5 @@
 import * as opentracing from '../opentracing/index';
-import { getComponentName } from './component-name';
+import { getTags } from './tag';
 
 
 
@@ -151,11 +151,11 @@ export function Trace<T extends CustomRelationHandler>(options: {
                 throw err;
             }
 
-            // Inject `@ComponentName` to tags
-            const componentName = getComponentName(this);
-            if (componentName) {
+            // Inject `@Tag` to tags
+            const tags = getTags(this);
+            if (tags) {
                 newSpanOptions.tags = {
-                    [opentracing.Tags.COMPONENT]: componentName,
+                    ...tags,
                     ...newSpanOptions // The tags that handler set, can override component
                 };
             }
