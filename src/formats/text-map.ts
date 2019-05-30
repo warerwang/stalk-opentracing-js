@@ -3,10 +3,11 @@ import { SpanContext } from '../stalk/span-context'
 import { IFormat } from './interface';
 
 
+// Make http header compatible
 export const TextMapFormatPropertyKeys = {
-    TRACE_ID: 'stalk:traceId',
-    SPAN_ID: 'stalk:spanId',
-    BAGGAGE_ITEM_PREFIX: 'stalk:baggage:'
+    TRACE_ID: 'X-Stalk-TraceId',
+    SPAN_ID: 'X-Stalk-SpanId',
+    BAGGAGE_ITEM_PREFIX: 'X-Stalk-BaggageItem-'
 };
 
 
