@@ -39,11 +39,8 @@ export class ZipkinReporter extends BaseReporter {
     report() {
         const spansToReport = this._spans.slice();
         return this._fetch(`${this._zipkinBaseUrl}/api/v2/spans`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
+            method: 'post',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(spansToReport)
         }).then((res) => {
             if (res.ok) {
