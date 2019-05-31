@@ -28,4 +28,8 @@ export declare function toZipkinJSON(span: Span): {
     tags: {
         [key: string]: string;
     };
+    annotations: {
+        timestamp: number;
+        value: string;
+    }[];
 };

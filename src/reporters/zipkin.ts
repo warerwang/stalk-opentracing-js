@@ -61,7 +61,7 @@ export default ZipkinReporter;
 export function toZipkinJSON(span: Span) {
     const data = span.toJSON();
 
-    // TODO: localEndpoint, logs-annotations
+    // TODO: localEndpoint
 
     const tags: { [key: string]: string } = {};
     for (let name in data.tags) {
@@ -74,7 +74,21 @@ export function toZipkinJSON(span: Span) {
         name: data.operationName,
         timestamp: data.startTime * 1000,
         duration: (data.finishTime - data.startTime) * 1000,
-        tags
+        tags,
+        annotations: data.logs.map((log) => {
+            let value = '';
+
+            if (log.fields.level && log.fields.message) {
+                value = `[${log.fields.level}] ${log.fields.message}`;
+            } else {
+                value = JSON.stringify(log.fields)
+            }
+
+            return {
+                timestamp: (log.timestamp || 0) * 1000,
+                value
+            };
+        })
     };
 
     const parentId = data.references.length > 0 ? data.references[0].referencedContext.toSpanId() : null;
