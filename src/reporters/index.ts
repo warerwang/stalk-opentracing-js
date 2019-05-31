@@ -6,3 +6,4 @@ export { SpanFilterProxyReporter } from './proxy/span-filter';
 export { LogFilterProxyReporter } from './proxy/log-filter';
 export { SpanComponentTagFilterProxyReporter } from './proxy/span-component-tag-filter';
 export { LogLevelFilterProxyReporter } from './proxy/log-level-filter';
+export { ZipkinReporter } from './zipkin';
