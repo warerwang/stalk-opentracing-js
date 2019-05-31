@@ -143,7 +143,6 @@ export function Trace<T extends CustomRelationHandler>(options: {
             try {
                 const handlerResultOptions = optionsAs.handler.apply(this, args);
                 newSpanOptions = {
-                    ...newSpanOptions,
                     ...handlerResultOptions
                 };
             } catch (err) {
@@ -156,7 +155,7 @@ export function Trace<T extends CustomRelationHandler>(options: {
             if (tags) {
                 newSpanOptions.tags = {
                     ...tags,
-                    ...newSpanOptions // The tags that handler set, can override component
+                    ...newSpanOptions.tags // The tags that handler set, can override component
                 };
             }
 
