@@ -26,6 +26,6 @@ export declare function toZipkinJSON(span: Span): {
     timestamp: number;
     duration: number;
     tags: {
-        [x: string]: any;
+        [key: string]: string;
     };
 };

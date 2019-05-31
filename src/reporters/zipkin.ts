@@ -63,13 +63,18 @@ export function toZipkinJSON(span: Span) {
 
     // TODO: localEndpoint, logs-annotations
 
+    const tags: { [key: string]: string } = {};
+    for (let name in data.tags) {
+        tags[name] = data.tags[name] + '';
+    }
+
     const output = {
         traceId: data.context.toTraceId(),
         id: data.context.toSpanId(),
         name: data.operationName,
         timestamp: data.startTime * 1000,
         duration: (data.finishTime - data.startTime) * 1000,
-        tags: { ...data.tags }
+        tags
     };
 
     const parentId = data.references.length > 0 ? data.references[0].referencedContext.toSpanId() : null;
