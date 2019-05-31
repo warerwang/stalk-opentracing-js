@@ -2,8 +2,11 @@ import * as opentracing from '../opentracing/index';
 import Span from './span';
 import SpanContext from './span-context';
 import BaseReporter from '../reporters/base';
-import * as shortid from 'shortid';
+import * as generate from 'nanoid/generate';
 import { TextMapFormat } from '../formats/text-map';
+
+
+const generateId = generate.bind(null, '01234567890abcdef', 16);
 
 
 /**
@@ -80,8 +83,8 @@ export class Tracer extends opentracing.Tracer {
         // If it doesn't exists, start a new trace
         const firstRef = fields.references ? fields.references[0] : null;
         const firstRefContext = firstRef ? firstRef.referencedContext() as SpanContext: null;
-        const traceId = firstRefContext ? firstRefContext.toTraceId() : shortid.generate();
-        const spanId = shortid.generate();
+        const traceId = firstRefContext ? firstRefContext.toTraceId() : generateId();
+        const spanId = generateId();
         const spanContext = new SpanContext(traceId, spanId);
         if (firstRefContext && firstRefContext.baggageItems) spanContext.addBaggageItems(firstRefContext.baggageItems);
 
