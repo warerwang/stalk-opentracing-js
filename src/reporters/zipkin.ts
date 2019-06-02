@@ -3,6 +3,18 @@ import { Span } from '../stalk/span';
 import { BaseReporter } from './base';
 
 
+/**
+ * Converts spans into zepkin-compatible json format and reports to
+ * Zipkin's json-v2 http endpoints. Please refer:
+ * https://zipkin.apache.org/zipkin-api/#/default/post_spans
+ *
+ * Also works with Jaeger collector's partial implementation of Zipkin’s
+ * HTTP POST endpoint when `COLLECTOR_ZIPKIN_HTTP_PORT=9411` is set.
+ *
+ * For http communication `fetch()` API is used. In you're in browser, no worries,
+ * just pass built-in `window.fetch` function. If you're in node.js, you need to
+ * bring your own fetch, check `node-fetch` package.
+ */
 export class ZipkinReporter extends BaseReporter {
     private _serviceName: string;
     private _spans: any[] = [];
