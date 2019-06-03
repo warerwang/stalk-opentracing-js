@@ -25,6 +25,7 @@ export class ZipkinReporter extends BaseReporter {
     private _spans: any[] = [];
     private _zipkinBaseUrl = 'http://localhost:9411';
     private _fetch: typeof fetch;
+    private _requestHeaders: { [key: string]: string } = {};
 
     accepts = {
         spanCreate: false,
@@ -37,11 +38,13 @@ export class ZipkinReporter extends BaseReporter {
         serviceName: string,
         zipkinBaseUrl: string,
         fetch: typeof fetch
+        requestHeaders?: { [key: string]: string }
     }) {
         super();
         this._serviceName = options.serviceName;
         this._zipkinBaseUrl = options.zipkinBaseUrl;
         this._fetch = options.fetch;
+        this._requestHeaders = options.requestHeaders || {};
     }
 
 
@@ -57,7 +60,10 @@ export class ZipkinReporter extends BaseReporter {
         const spansToReport = this._spans.slice();
         return this._fetch(`${this._zipkinBaseUrl}/api/v2/spans`, {
             method: 'post',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                ...this._requestHeaders
+            },
             body: JSON.stringify(spansToReport)
         }).then((res) => {
             if (res.ok) {

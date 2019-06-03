@@ -22,6 +22,7 @@ export declare class ZipkinReporter extends BaseReporter {
     private _spans;
     private _zipkinBaseUrl;
     private _fetch;
+    private _requestHeaders;
     accepts: {
         spanCreate: boolean;
         spanLog: boolean;
@@ -31,6 +32,9 @@ export declare class ZipkinReporter extends BaseReporter {
         serviceName: string;
         zipkinBaseUrl: string;
         fetch: typeof fetch;
+        requestHeaders?: {
+            [key: string]: string;
+        };
     });
     recieveSpanFinish(span: Span): void;
     report(): Promise<Response>;

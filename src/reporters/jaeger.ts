@@ -29,6 +29,7 @@ export class JaegerReporter extends BaseReporter {
     private _spans: any[] = [];
     private _jaegerBaseUrl = 'http://localhost:14268';
     private _fetch: typeof fetch;
+    private _requestHeaders: { [key: string]: string } = {};
 
 
     accepts = {
@@ -44,12 +45,14 @@ export class JaegerReporter extends BaseReporter {
             tags: { [key: string]: string }
         },
         jaegerBaseUrl: string,
-        fetch: typeof fetch
+        fetch: typeof fetch,
+        requestHeaders?: { [key: string]: string }
     }) {
         super();
         this._process = options.process;
         this._jaegerBaseUrl = options.jaegerBaseUrl;
         this._fetch = options.fetch;
+        this._requestHeaders = options.requestHeaders || {};
     }
 
 
@@ -118,7 +121,8 @@ export class JaegerReporter extends BaseReporter {
             method: 'post',
             headers: {
                 'Content-Type': 'application/x-thrift',
-                'Connection': 'keep-alive'
+                'Connection': 'keep-alive',
+                ...this._requestHeaders
             },
             body: buffer
         }).then((res) => {
