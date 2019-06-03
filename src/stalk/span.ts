@@ -94,7 +94,7 @@ export class Span extends opentracing.Span {
         const span = new Span(null, spanContext);
         span._operationName = raw.operationName;
         span._startTime = raw.startTime;
-        span._finishTime = raw.startTime;
+        span._finishTime = raw.finishTime;
 
         if (raw.references && raw.references.length > 0) {
             span._references = raw.references.map((ref: any) => {
