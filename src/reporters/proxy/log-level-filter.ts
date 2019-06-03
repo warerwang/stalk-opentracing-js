@@ -13,6 +13,10 @@ const LOG_LEVEL_PRIORITY: { [key: string]: number } = {
 };
 
 
+/**
+ * If you're using `span.logger` API, you can use this proxy reporter to
+ * filter some logs arriving `.recieveSpanLog()` by their log level.
+ */
 export class LogLevelFilterProxyReporter extends LogFilterProxyReporter {
     private _logLevel: SpanLoggerLogLevel;
 
