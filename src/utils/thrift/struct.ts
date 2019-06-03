@@ -4,7 +4,7 @@ import { IBaseType } from './ibase-type';
 interface StructField {
     type: StructFieldType,
     id: number,
-    name: string,
+    name: string, // You can omit name, it's just for readability
     value: IBaseType
 }
 

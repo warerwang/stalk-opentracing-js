@@ -5,11 +5,15 @@ import * as Thrift from '../utils/thrift/index';
 
 
 /**
- * Since Jaeger API does not allow CORS, this reporter does not work on browsers.
- * To skip this issue, a proxy server can be used.
- *
  * This reporter converts the data to jaeger.thrift binary format and sends them
- * to the directly Jaeger collector's http endpoint. For jaeger.thrift format, please refer:
+ * to the directly Jaeger collector's http endpoint. Since Jaeger API does not allow CORS,
+ * this reporter does not work on browsers. To skip this issue, a proxy server can be used.
+ *
+ * This reporter uses ArrayBuffer, DataView, BigInt APIs for thrift binary encoding. So your
+ * targetting platform must support these APIs or they must be polyfilled. BigInt is currently
+ * supported by just `Chrome >=67` in browswers, and node.js got its BigInt support on `v10.4.0`.
+ *
+ * For jaeger.thrift format, please refer:
  * https://github.com/jaegertracing/jaeger-idl/blob/master/thrift/jaeger.thrift
  *
  * For http communication `fetch()` API is used. In you're in browser, no worries,
