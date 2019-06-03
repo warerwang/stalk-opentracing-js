@@ -86,6 +86,31 @@ export class Span extends opentracing.Span {
     }
 
 
+    static fromJSON(raw: any) {
+        const spanContext = new SpanContext(raw.context.traceId, raw.context.spanId)
+        spanContext.addBaggageItems(raw.context.baggageItems || {});
+
+        // TODO: Is it OK to pass null as tracer?
+        const span = new Span(null, spanContext);
+        span._operationName = raw.operationName;
+        span._startTime = raw.startTime;
+        span._finishTime = raw.startTime;
+
+        if (raw.references && raw.references.length > 0) {
+            span._references = raw.references.map((ref: any) => {
+                const refCtx = new SpanContext(ref.referencedContext.traceId, ref.referencedContext.spanId);
+                refCtx.addBaggageItems(ref.referencedContext.baggageItems || {});
+                return new opentracing.Reference(ref.type, refCtx);
+            });
+        }
+
+        span._tags = raw.tags || {};
+        span._logs = raw.logs || [];
+
+        return span;
+    }
+
+
     ///////////////////////////////////////////
     // Override opentracing internal methods //
     ///////////////////////////////////////////

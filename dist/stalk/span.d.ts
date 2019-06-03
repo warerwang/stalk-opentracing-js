@@ -57,6 +57,7 @@ export declare class Span extends opentracing.Span {
         };
         logs: ISpanLog[];
     };
+    static fromJSON(raw: any): Span;
     /**
      * Returns the span context.
      */
