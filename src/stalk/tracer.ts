@@ -88,7 +88,6 @@ export class Tracer extends opentracing.Tracer {
         const spanContext = new SpanContext(traceId, spanId);
         if (firstRefContext && firstRefContext.baggageItems) spanContext.addBaggageItems(firstRefContext.baggageItems);
 
-        // Create a span instance from `this.spanClass` class.
         const span = new Span(this, spanContext);
         span.setOperationName(name);
         span.addTags(this._tags);
