@@ -38,7 +38,7 @@ export class StalkAgentHttpReporter extends BaseReporter {
 
     report() {
         const spansToReport = this._spans.slice();
-        return this._fetch(`${this._stalkAgentApiRoot}/spans`, {
+        return this._fetch(`${this._stalkAgentApiRoot}/batch`, {
             method: 'post',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
