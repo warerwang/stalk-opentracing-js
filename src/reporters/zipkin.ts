@@ -26,6 +26,7 @@ export class ZipkinReporter extends BaseReporter {
     private _zipkinBaseUrl = 'http://localhost:9411';
     private _fetch: typeof fetch;
     private _requestHeaders: { [key: string]: string } = {};
+    private _shouldConvertLogsToAnnotations = false;
 
     accepts = {
         spanCreate: false,
@@ -38,18 +39,23 @@ export class ZipkinReporter extends BaseReporter {
         serviceName: string,
         zipkinBaseUrl: string,
         fetch: typeof fetch
-        requestHeaders?: { [key: string]: string }
+        requestHeaders?: { [key: string]: string },
+        convertLogsToAnnotations?: boolean
     }) {
         super();
         this._serviceName = options.serviceName;
         this._zipkinBaseUrl = options.zipkinBaseUrl;
         this._fetch = options.fetch;
         this._requestHeaders = options.requestHeaders || {};
+        this._requestHeaders = options.requestHeaders || {};
+        if (typeof options.convertLogsToAnnotations == 'boolean') {
+            this._shouldConvertLogsToAnnotations = options.convertLogsToAnnotations;
+        }
     }
 
 
     recieveSpanFinish(span: Span) {
-        const data = toZipkinJSON(span) as any;
+        const data = toZipkinJSON(span, this._shouldConvertLogsToAnnotations) as any;
         if (!data.localEndpoint) data.localEndpoint = {};
         data.localEndpoint.serviceName = this._serviceName;
         this._spans.push(data);
@@ -81,7 +87,7 @@ export class ZipkinReporter extends BaseReporter {
 export default ZipkinReporter;
 
 
-export function toZipkinJSON(span: Span) {
+export function toZipkinJSON(span: Span, shouldConvertLogsToAnnotations = false) {
     const data = span.toJSON();
 
     // TODO: localEndpoint
@@ -97,22 +103,25 @@ export function toZipkinJSON(span: Span) {
         name: data.operationName,
         timestamp: data.startTime * 1000,
         duration: (data.finishTime - data.startTime) * 1000,
-        tags,
-        annotations: data.logs.map((log) => {
+        tags
+    };
+
+    if (shouldConvertLogsToAnnotations) {
+        (output as any).annotations = data.logs.map((log) => {
             let value = '';
 
             if (log.fields.level && log.fields.message) {
                 value = `[${log.fields.level}] ${log.fields.message}`;
             } else {
-                value = JSON.stringify(log.fields)
+                value = JSON.stringify(log.fields);
             }
 
             return {
                 timestamp: (log.timestamp || 0) * 1000,
                 value
             };
-        })
-    };
+        });
+    }
 
     const parentId = data.references.length > 0 ? data.references[0].referencedContext.toSpanId() : null;
     if (parentId) (output as any).parentId = parentId;
