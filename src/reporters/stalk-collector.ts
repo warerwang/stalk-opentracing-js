@@ -2,11 +2,11 @@ import { BaseReporter } from './base';
 import { Span } from '../stalk/span';
 
 
-export class StalkAgentHttpReporter extends BaseReporter {
+export class StalkCollectorHttpReporter extends BaseReporter {
     private _serviceName: string;
     private _tags: { [key: string]: string } = {};
     private _spans: any[] = [];
-    private _stalkAgentApiRoot = 'http://localhost:7855';
+    private _stalkCollectorApiRoot = 'http://localhost:7855';
     private _fetch: typeof fetch;
 
     accepts = {
@@ -19,14 +19,14 @@ export class StalkAgentHttpReporter extends BaseReporter {
     constructor(options: {
         serviceName: string,
         tags?: { [key: string]: string },
-        stalkAgentApiRoot: string,
+        stalkCollectorApiRoot: string,
         fetch: typeof fetch
     }) {
         super();
 
         this._serviceName = options.serviceName;
         if (options.tags) this._tags = options.tags;
-        this._stalkAgentApiRoot = options.stalkAgentApiRoot;
+        this._stalkCollectorApiRoot = options.stalkCollectorApiRoot;
         this._fetch = options.fetch;
     }
 
@@ -38,7 +38,7 @@ export class StalkAgentHttpReporter extends BaseReporter {
 
     report() {
         const spansToReport = this._spans.slice();
-        return this._fetch(`${this._stalkAgentApiRoot}/batch`, {
+        return this._fetch(`${this._stalkCollectorApiRoot}/batch`, {
             method: 'post',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

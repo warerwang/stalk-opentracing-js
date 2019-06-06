@@ -1,10 +1,10 @@
 import { BaseReporter } from './base';
 import { Span } from '../stalk/span';
-export declare class StalkAgentHttpReporter extends BaseReporter {
+export declare class StalkCollectorHttpReporter extends BaseReporter {
     private _serviceName;
     private _tags;
     private _spans;
-    private _stalkAgentApiRoot;
+    private _stalkCollectorApiRoot;
     private _fetch;
     accepts: {
         spanCreate: boolean;
@@ -16,7 +16,7 @@ export declare class StalkAgentHttpReporter extends BaseReporter {
         tags?: {
             [key: string]: string;
         };
-        stalkAgentApiRoot: string;
+        stalkCollectorApiRoot: string;
         fetch: typeof fetch;
     });
     recieveSpanFinish(span: Span): void;

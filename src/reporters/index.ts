@@ -8,4 +8,4 @@ export * from './proxy/span-component-tag-filter';
 export * from './proxy/log-level-filter';
 export * from './zipkin';
 export * from './jaeger';
-export * from './stalk-agent';
+export * from './stalk-collector';

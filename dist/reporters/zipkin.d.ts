@@ -23,6 +23,7 @@ export declare class ZipkinReporter extends BaseReporter {
     private _zipkinBaseUrl;
     private _fetch;
     private _requestHeaders;
+    private _shouldConvertLogsToAnnotations;
     accepts: {
         spanCreate: boolean;
         spanLog: boolean;
@@ -35,12 +36,13 @@ export declare class ZipkinReporter extends BaseReporter {
         requestHeaders?: {
             [key: string]: string;
         };
+        convertLogsToAnnotations?: boolean;
     });
     recieveSpanFinish(span: Span): void;
     report(): Promise<Response>;
 }
 export default ZipkinReporter;
-export declare function toZipkinJSON(span: Span): {
+export declare function toZipkinJSON(span: Span, shouldConvertLogsToAnnotations?: boolean): {
     traceId: string;
     id: string;
     name: string;
@@ -49,8 +51,4 @@ export declare function toZipkinJSON(span: Span): {
     tags: {
         [key: string]: string;
     };
-    annotations: {
-        timestamp: number;
-        value: string;
-    }[];
 };
