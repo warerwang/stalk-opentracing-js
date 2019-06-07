@@ -215,6 +215,10 @@ export function toJaegerThriftStructure(span: Span) {
     data.logs.forEach((log) => {
         const fieldsList = new Thrift.List([], Thrift.StructFieldType.STRUCT);
         for (let name in log.fields) {
+            let value = log.fields[name];
+            if (!value) continue;
+            if (typeof value == 'object') value = JSON.stringify(value);
+
             const tagStruct = new Thrift.Struct([
                 {
                     id: 1, name: 'key', type: Thrift.StructFieldType.STRING,
@@ -226,7 +230,7 @@ export function toJaegerThriftStructure(span: Span) {
                 },
                 {
                     id: 3, name: 'vStr', type: Thrift.StructFieldType.STRING,
-                    value: new Thrift.String(log.fields[name] + '') // cast string
+                    value: new Thrift.String(value + '') // cast string
                 }
             ]);
 
