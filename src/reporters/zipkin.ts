@@ -3,6 +3,13 @@ import { Span } from '../stalk/span';
 import { BaseReporter } from './base';
 
 
+interface LocalEndpoint {
+    serviceName: string,
+    ipv4?: string,
+    port?: number
+}
+
+
 /**
  * Converts spans into zipkin-compatible json format and reports to
  * Zipkin's json-v2 http endpoints. Please refer:
@@ -21,12 +28,27 @@ import { BaseReporter } from './base';
  * If you're in node.js, you need to bring your own fetch, check `node-fetch` package.
  */
 export class ZipkinReporter extends BaseReporter {
-    private _serviceName: string;
+    private _localEndpoint: LocalEndpoint;
+    /**
+     * Since zipkin does not have process tags or localEndpoint tags,
+     * these will be appended to each span.
+     */
+    private _tags: { [key: string]: string } = {};
     private _spans: any[] = [];
     private _zipkinBaseUrl = 'http://localhost:9411';
     private _fetch: typeof fetch;
     private _requestHeaders: { [key: string]: string } = {};
-    private _shouldConvertLogsToAnnotations = false;
+    /**
+     * Zipkin does not have log api, but it supports annotations which is just
+     * plain string. Stalk can convert logs into annotations
+     * - If stalk's `logger` api is used, the log converted into `[level] message`
+     * format.
+     * - If log structure is not familiar, all the log fields will be `JSON.stringify`ed.
+     *
+     * However, I don't know if it's the right way:
+     * https://github.com/apache/incubator-zipkin-api/blob/master/thrift/zipkinCore.thrift#L330
+     */
+    private _shouldConvertLogsToAnnotations = true;
 
     accepts = {
         spanCreate: false,
@@ -36,14 +58,16 @@ export class ZipkinReporter extends BaseReporter {
 
 
     constructor(options: {
-        serviceName: string,
+        localEndpoint: LocalEndpoint
+        tags: { [key: string]: string },
         zipkinBaseUrl: string,
         fetch: typeof fetch
         requestHeaders?: { [key: string]: string },
         convertLogsToAnnotations?: boolean
     }) {
         super();
-        this._serviceName = options.serviceName;
+        this._localEndpoint = options.localEndpoint;
+        if (typeof options.tags == 'object') this._tags = options.tags;
         this._zipkinBaseUrl = options.zipkinBaseUrl;
         this._fetch = options.fetch;
         this._requestHeaders = options.requestHeaders || {};
@@ -55,9 +79,8 @@ export class ZipkinReporter extends BaseReporter {
 
 
     recieveSpanFinish(span: Span) {
-        const data = toZipkinJSON(span, this._shouldConvertLogsToAnnotations) as any;
-        if (!data.localEndpoint) data.localEndpoint = {};
-        data.localEndpoint.serviceName = this._serviceName;
+        const data = toZipkinJSON(span, this._shouldConvertLogsToAnnotations, this._tags) as any;
+        data.localEndpoint = this._localEndpoint;
         this._spans.push(data);
     }
 
@@ -87,15 +110,12 @@ export class ZipkinReporter extends BaseReporter {
 export default ZipkinReporter;
 
 
-export function toZipkinJSON(span: Span, shouldConvertLogsToAnnotations = false) {
+export function toZipkinJSON(span: Span, shouldConvertLogsToAnnotations = false, constantTags: { [key: string]: string } = {}) {
     const data = span.toJSON();
 
-    // TODO: localEndpoint
-
     const tags: { [key: string]: string } = {};
-    for (let name in data.tags) {
-        tags[name] = data.tags[name] + '';
-    }
+    for (let name in constantTags) { tags[name] = data.tags[name] + ''; }
+    for (let name in data.tags) { tags[name] = data.tags[name] + ''; }
 
     const output = {
         traceId: data.context.toTraceId(),

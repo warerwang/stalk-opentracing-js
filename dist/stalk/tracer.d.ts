@@ -23,6 +23,8 @@ export declare class Tracer extends opentracing.Tracer {
     addTags(tags: {
         [key: string]: string;
     }): void;
+    deleteTag(name: string): void;
+    clearTags(name: string): void;
     /**
      * Adds a reporter.
      */

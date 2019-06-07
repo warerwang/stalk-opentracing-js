@@ -39,6 +39,16 @@ export class Tracer extends opentracing.Tracer {
     }
 
 
+    deleteTag(name: string) {
+        delete this._tags[name];
+    }
+
+
+    clearTags(name: string) {
+        this._tags = {};
+    }
+
+
     /**
      * Adds a reporter.
      */
