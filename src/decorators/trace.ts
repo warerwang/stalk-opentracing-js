@@ -1,5 +1,6 @@
 import * as opentracing from '../opentracing/index';
 import { getTags } from './tag';
+import getGlobal from '../utils/get-global';
 
 
 
@@ -137,7 +138,8 @@ export function Trace<T extends CustomRelationHandler>(options: {
         // Replace the method
         propertyDesciptor.value = function(...args: any[]) {
             const parentSpan: opentracing.Span = args[0] instanceof opentracing.Span ? args[0] : null;
-            const tracer = parentSpan ? parentSpan.tracer() : opentracing.globalTracer();
+            const opentracingRef = getGlobal().opentracing || opentracing;
+            const tracer = parentSpan ? parentSpan.tracer() : opentracingRef.globalTracer();
             let newSpanOptions: opentracing.SpanOptions = {};
 
             try {
