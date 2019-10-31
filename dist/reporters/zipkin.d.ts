@@ -37,7 +37,7 @@ export declare class ZipkinReporter extends BaseReporter {
      * Zipkin does not have log api, but it supports annotations which is just
      * plain string. Stalk can convert logs into annotations
      * - If stalk's `logger` api is used, the log converted into `[level] message`
-     * format.
+     * format. Yes, the other fields are ignored.
      * - If log structure is not familiar, all the log fields will be `JSON.stringify`ed.
      *
      * However, I don't know if it's the right way:
