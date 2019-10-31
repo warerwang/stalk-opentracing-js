@@ -42,7 +42,7 @@ export class ZipkinReporter extends BaseReporter {
      * Zipkin does not have log api, but it supports annotations which is just
      * plain string. Stalk can convert logs into annotations
      * - If stalk's `logger` api is used, the log converted into `[level] message`
-     * format.
+     * format. Yes, the other fields are ignored.
      * - If log structure is not familiar, all the log fields will be `JSON.stringify`ed.
      *
      * However, I don't know if it's the right way:
@@ -143,6 +143,8 @@ export function toZipkinJSON(span: Span, shouldConvertLogsToAnnotations = false,
         });
     }
 
+    // As far as I understand, zipkin does not have `followsFrom` relation
+    // So we're setting any referenced span as parent span :/
     const parentId = data.references.length > 0 ? data.references[0].referencedContext.toSpanId() : null;
     if (parentId) (output as any).parentId = parentId;
 
