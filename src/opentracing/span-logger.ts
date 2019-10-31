@@ -32,6 +32,12 @@ export default class SpanLogger {
     }
 
 
+    // TODO: Just accept string-string object payload OR an error-type object
+    // If it's error mark like this:
+    // event="error"
+    // message="..." err.message
+    // stack="..." (optional) err.stack
+    // error.kind="..." (optional) err.name or type?
     error(message: string, ...payload: any[]) {
         this._span.log({
             level: SpanLoggerLogLevel.ERROR, message, payload,

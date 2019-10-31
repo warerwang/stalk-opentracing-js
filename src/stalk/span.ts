@@ -147,7 +147,7 @@ export class Span extends opentracing.Span {
     protected _addTags(keyValuePairs: { [key: string]: any }) {
         this._tags = {
             ...this._tags,
-            ...keyValuePairs
+            ...keyValuePairs // TODO: Cast to string
         };
     }
 
@@ -157,7 +157,7 @@ export class Span extends opentracing.Span {
      */
     protected _log(keyValuePairs: { [key: string]: any }, timestamp?: number) {
         const log = {
-            fields: keyValuePairs,
+            fields: keyValuePairs, // TODO: Cast to string
             timestamp: timestamp || Date.now()
         };
         this._logs.push(log);
