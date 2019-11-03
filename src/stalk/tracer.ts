@@ -2,11 +2,10 @@ import * as opentracing from '../opentracing/index';
 import Span from './span';
 import SpanContext from './span-context';
 import BaseReporter from '../reporters/base';
-import * as generate from 'nanoid/generate';
 import { TextMapFormat } from '../formats/text-map';
 
 
-const generateId = generate.bind(null, '01234567890abcdef', 16);
+const generateId = () => Math.random().toString(16).substring(2, 10) + Math.random().toString(16).substring(2, 10);
 
 
 /**
