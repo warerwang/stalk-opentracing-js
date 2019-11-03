@@ -1,6 +1,6 @@
 import { BaseReporter } from './base';
 import { Span } from '../stalk/span';
-export declare class StalkCollectorHttpReporter extends BaseReporter {
+export declare class StalkCollectorReporter extends BaseReporter {
     private _serviceName;
     private _tags;
     private _spans;

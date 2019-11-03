@@ -1,0 +1,42 @@
+const { opentracing, stalk } = require('../../');
+const sleep = (duration) => new Promise(resolve => setTimeout(resolve, duration));
+
+// Create a new stalk tracer and set it as global tracer
+const stalkTracer = new stalk.Tracer();
+opentracing.initGlobalTracer(stalkTracer);
+const globalTracer = opentracing.globalTracer();
+
+stalkTracer.addTags({
+    tag1: 'value1',
+    tag2: 'value2'
+});
+// stalkTracer.deleteTag('tag2');
+// stalkTracer.clearTags();
+
+
+async function main() {
+    const span = globalTracer.startSpan('main()');
+    span.addTags({
+        tag1: 'value1',
+        tag2: 'value2'
+    });
+
+    span.log({ message: 'Will wait 1 second' });
+    await sleep(1000);
+    await printHello(span);
+    span.finish();
+}
+
+
+async function printHello(parentSpan) {
+    const span = globalTracer.startSpan('printHello()', { childOf: parentSpan });
+    span.log({ message: 'Will wait 500ms more, because I can' });
+    await sleep(500);
+    console.log('Hello world!');
+    span.finish();
+}
+
+main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+});

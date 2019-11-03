@@ -2,7 +2,7 @@ import { BaseReporter } from './base';
 import { Span } from '../stalk/span';
 
 
-export class StalkCollectorHttpReporter extends BaseReporter {
+export class StalkCollectorReporter extends BaseReporter {
     private _serviceName: string;
     private _tags: { [key: string]: string } = {};
     private _spans: any[] = [];
