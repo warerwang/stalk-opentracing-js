@@ -1,7 +1,7 @@
 import BaseReporter from '../base';
 import Span, { ISpanLog } from '../../stalk/span';
 import LogFilterProxyReporter from './log-filter';
-import { SpanLoggerLogLevel } from '../../opentracing/span-logger';
+import { SpanLoggerLogLevel } from '../../stalk/span-logger';
 
 
 const LOG_LEVEL_PRIORITY: { [key: string]: number } = {

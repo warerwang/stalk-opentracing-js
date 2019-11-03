@@ -93,7 +93,7 @@ describe('StalkTracer behaviour tests', function() {
             reporter.recieveSpanLog = () => { isCalled = true };
             tracer.addReporter(reporter);
             const span = tracer.startSpan('some operation');
-            span.logger.info('some log message');
+            span.log({ level: 'info', message: 'some log message' });
             expect(isCalled).to.be.true;
         });
 

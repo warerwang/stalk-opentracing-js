@@ -1,7 +1,6 @@
 import * as noop from './noop';
 import SpanContext from './span_context';
 import Tracer from './tracer';
-import SpanLogger from './span-logger';
 
 
 /**
@@ -11,13 +10,6 @@ import SpanLogger from './span-logger';
  * may have zero or more child Spans, which in turn may have children.
  */
 export class Span {
-    readonly logger: SpanLogger;
-
-
-    constructor() {
-        this.logger = new SpanLogger(this);
-    }
-
 
     // ---------------------------------------------------------------------- //
     // OpenTracing API methods
