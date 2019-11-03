@@ -1,4 +1,4 @@
-import Span from './span';
+import Span from '../opentracing/span';
 export declare enum SpanLoggerLogLevel {
     ERROR = "error",
     WARN = "warn",

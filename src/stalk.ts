@@ -1,5 +1,6 @@
 export * from './stalk/span-context';
 export * from './stalk/span';
+export * from './stalk/span-logger';
 export * from './stalk/tracer';
 
 import * as reporters from './reporters/index';

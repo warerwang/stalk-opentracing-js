@@ -1,7 +1,7 @@
 import BaseReporter from '../base';
 import Span, { ISpanLog } from '../../stalk/span';
 import LogFilterProxyReporter from './log-filter';
-import { SpanLoggerLogLevel } from '../../opentracing/span-logger';
+import { SpanLoggerLogLevel } from '../../stalk/span-logger';
 /**
  * If you're using `span.logger` API, you can use this proxy reporter to
  * filter some logs arriving `.recieveSpanLog()` by their log level.

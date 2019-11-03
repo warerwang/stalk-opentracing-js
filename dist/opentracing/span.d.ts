@@ -1,6 +1,5 @@
 import SpanContext from './span_context';
 import Tracer from './tracer';
-import SpanLogger from './span-logger';
 /**
  * Span represents a logical unit of work as part of a broader Trace. Examples
  * of span might include remote procedure calls or a in-process function calls
@@ -8,8 +7,6 @@ import SpanLogger from './span-logger';
  * may have zero or more child Spans, which in turn may have children.
  */
 export declare class Span {
-    readonly logger: SpanLogger;
-    constructor();
     /**
      * Returns the SpanContext object associated with this Span.
      *

@@ -17,7 +17,7 @@ module.exports = [
             extensions: [ '.tsx', '.ts', '.js' ]
         },
         output: {
-            library: 'tracing',
+            library: 'StalkOpentracing',
             libraryTarget: 'umd',
             filename: 'web.js',
             path: path.resolve(__dirname, 'dist')

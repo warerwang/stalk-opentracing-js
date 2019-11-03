@@ -35,7 +35,7 @@ declare type PredefinedRelations = 'childOf' | 'followsFrom' | 'newTrace';
  *
  *      @Trace({ relation: 'childOf', autoFinish: true }) // operationName can be omitted, method name is used by default
  *      sum(span, a, b) {
- *          span.logger.info(`Sum is called with ${a} and ${b}`);
+ *          span.log({ level: 'info', message: `Sum is called with ${a} and ${b}` });
  *          return a + b;
  *      }
  * }
@@ -72,7 +72,7 @@ declare type PredefinedRelations = 'childOf' | 'followsFrom' | 'newTrace';
  *      db.get(id, (err, result) => {
  *          if (err) {
  *              span.setTag('error', true);
- *              span.logger.error('Something went wrong', err);
+ *              span.log({ level: 'error', event: 'error', message: err.message, stack: err.stack, 'error.kind': err.name });
  *          }
  *
  *          span.finish();
