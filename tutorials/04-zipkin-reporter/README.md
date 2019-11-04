@@ -59,4 +59,13 @@ main().then(async () => {
 
 Then go to zipkin ui (http://localhost:9411/zipkin/) and see the trace we just created.
 
-**[Tutorial 05 - JaegerReporter: Sending spans to Jaeger Backend](../05-jaeger-reporter/README.md)**
+## Running demo
+
+- Start local zipkin backend
+- Go to tutorial folder `cd ./tutorials/04-zipkin-reporter`
+- To run browser version `open web.html`
+- To run node version `npm i && node node.js`
+
+## Next
+
+[Tutorial 05 - JaegerReporter: Sending spans to Jaeger Backend](../05-jaeger-reporter/README.md)

@@ -67,4 +67,14 @@ main().then(async () => {
 
 Then go to jaeger ui (http://localhost:16686/) and see the trace we just created.
 
-**[Tutorial 07 - Typescript Decorators](../07-typescript-decorators/README.md)**
+## Running demo
+
+- Start local jaeger backend
+- Start stalk-collector with env variable `JAEGER_BASE_URL="http://localhost:14268"`
+- Go to tutorial folder `cd ./tutorials/06-stalk-collector`
+- To run browser version `open web.html`
+- To run node version `npm i && node node.js`
+
+## Next
+
+[Tutorial 07 - Typescript Decorators](../07-typescript-decorators/README.md)

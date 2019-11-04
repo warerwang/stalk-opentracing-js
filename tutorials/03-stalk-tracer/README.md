@@ -63,7 +63,15 @@ async function printHello(parentSpan) {
 
 However running this script is does not do anything, because we haven't added any reporters.
 
-**[Tutorial 04 - ZipkinReporter: Sending spans to Zipkin Backend](../04-zipkin-reporter/README.md)**
+# Running demo
+
+- Go to tutorial folder `cd ./tutorials/03-stalk-tracer`
+- To run browser version `open web.html`
+- To run node version `node node.js`
+
+# Next
+
+[Tutorial 04 - ZipkinReporter: Sending spans to Zipkin Backend](../04-zipkin-reporter/README.md)
 
 
 

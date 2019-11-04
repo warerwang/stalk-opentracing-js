@@ -83,4 +83,13 @@ After running this script, you can go to Jaeger's web ui (http://localhost:16686
 
 However `jaeger-client` package currently supports just node.js platform.
 
-**[Tutorial 03 - Stalk Tracer](../03-stalk-tracer/README.md)**
+## Running demo
+
+- Start local `jaeger-collector`
+- Go to tutorial folder `cd ./tutorials/02-jaeger-client-node`
+- Install dependencies `npm i`
+- Start demo `node index.js`
+
+## Next
+
+[Tutorial 03 - Stalk Tracer](../03-stalk-tracer/README.md)

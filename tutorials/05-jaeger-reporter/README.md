@@ -54,4 +54,16 @@ main().then(async () => {
 
 Then go to jaeger ui (http://localhost:16686/) and see the trace we just created.
 
-**[Tutorial 06 - Stalk Collector](../06-stalk-collector/README.md)**
+## Running demo
+
+- Start local jaeger backend
+- Go to tutorial folder `cd ./tutorials/05-jaeger-reporter`
+- To run node version `npm i && node node.js`
+- To run browser version:
+    - Quit your chrome
+    - Reopen with web security disabled `chrome --disable-web-security --user-data-dir`
+    - Open the html `open web.html`
+
+## Next
+
+[Tutorial 06 - Stalk Collector](../06-stalk-collector/README.md)

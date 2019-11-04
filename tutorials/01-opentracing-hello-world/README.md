@@ -94,4 +94,12 @@ main().catch((err) => {
 You will see `Hello world!` on your console, that's cool but opentracing's
 default tracer is noop tracer, so it does nothing. We need to use custom tracers to make it work.
 
-**[Tutorial 02 - Using Jaeger's offical node client](../02-jaeger-client-node/README.md)**
+## Running demo
+
+- Go to tutorial folder `cd ./tutorials/01-opentracing-hello-world`
+- To run browser version `open web.html`
+- To run node version `node node.js`
+
+## Next
+
+[Tutorial 02 - Using Jaeger's offical node client](../02-jaeger-client-node/README.md)

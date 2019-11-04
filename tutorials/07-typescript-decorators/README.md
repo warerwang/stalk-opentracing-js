@@ -158,3 +158,11 @@ class Demo {
     }
 }
 ```
+
+## Running demo
+
+- Start `stalk-collector` along with `jaeger-collector`
+- Go to tutorial folder `cd ./tutorials/07-typescript-decorators`
+- Open already build version in the browser `open dist/index.html`
+- To build this typescript demo `npm i && npm run build`
+
