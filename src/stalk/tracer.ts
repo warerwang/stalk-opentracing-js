@@ -3,6 +3,7 @@ import Span from './span';
 import SpanContext from './span-context';
 import BaseReporter from '../reporters/base';
 import { TextMapFormat } from '../formats/text-map';
+import { JaegerFormat, JaegerFormatName } from '../formats/jaeger';
 
 
 const generateId = () => Math.random().toString(16).substring(2, 10) + Math.random().toString(16).substring(2, 10);
@@ -129,6 +130,8 @@ export class Tracer extends opentracing.Tracer {
             case opentracing.FORMAT_HTTP_HEADERS:
             case opentracing.FORMAT_TEXT_MAP:
                 return TextMapFormat.inject(spanContext, carrier);
+            case JaegerFormatName:
+                return JaegerFormat.inject(spanContext, carrier);
             default:
                 console.error(`Could not inject context into carrier, unknown format "${format}"`, carrier);
         }
@@ -144,6 +147,9 @@ export class Tracer extends opentracing.Tracer {
             case opentracing.FORMAT_HTTP_HEADERS:
             case opentracing.FORMAT_TEXT_MAP: {
                 return TextMapFormat.extract(carrier);
+            }
+            case JaegerFormatName: {
+                return JaegerFormat.extract(carrier);
             }
             default: {
                 console.error(`Could not extract context from carrier, unknown carrier format "${format}"`, carrier);
