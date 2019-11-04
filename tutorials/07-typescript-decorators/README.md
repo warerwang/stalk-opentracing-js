@@ -166,3 +166,6 @@ class Demo {
 - Open already build version in the browser `open dist/index.html`
 - To build this typescript demo `npm i && npm run build`
 
+## Next
+
+[Tutorial 08 - Context Propagation](../08-context-propagation/README.md)
