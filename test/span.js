@@ -81,22 +81,6 @@ describe('StalkSpan behaviour tests', function() {
         span.finish(specificTime);
         expect(toJSON(span).finishTime).to.equal(specificTime);
     });
-
-    // it('should put logs with `.logger` API', function() {
-    //     // TODO: Payload tests
-    //     span.logger.silly('silly log message');
-    //     span.logger.debug('debug log message');
-    //     span.logger.info('info log message');
-    //     span.logger.warn('warning log message');
-    //     span.logger.error('error log message');
-    //     const resultLogs = toJSON(span).logs;
-    //     expect(resultLogs).to.have.lengthOf(5);
-    //     expect(resultLogs[0].fields.message).to.equal('silly log message');
-    //     expect(resultLogs[1].fields.message).to.equal('debug log message');
-    //     expect(resultLogs[2].fields.message).to.equal('info log message');
-    //     expect(resultLogs[3].fields.message).to.equal('warning log message');
-    //     expect(resultLogs[4].fields.message).to.equal('error log message');
-    // });
 });
 
 
