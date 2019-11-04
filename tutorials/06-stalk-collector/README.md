@@ -18,25 +18,30 @@ To start stalk-collector that proxies to local jaeger-collector
 JAEGER_BASE_URL="http://localhost:14268" npm start
 ```
 
+You can Visit [stalk-collector](https://github.com/dgurkaynak/stalk-collector) for more options.
+
 After stalk-collector agent is up & running, let's configure our reporter:
 
 ```js
 const stalkCollectorReporter = new stalk.reporters.StalkCollectorReporter({
     stalkCollectorApiRoot: 'http://localhost:7855',
     serviceName: 'my-awesome-service',
+
     // Optional process tags
     tags: {
         tag1: 'value1',
         tag2: 'value2'
     },
+
     // If you're on node.js use `node-fetch` package
     fetch: window.fetch.bind(window),
+
     // Extra http headers
     // requestHeaders: {},
 });
 ```
 
-Add the reporter to tracers
+Add the reporter to `stalk.Tracer`
 
 ```js
 stalkTracer.addReporter(stalkCollectorReporter);
@@ -62,4 +67,4 @@ main().then(async () => {
 
 Then go to jaeger ui (http://localhost:16686/) and see the trace we just created.
 
-
+**[Tutorial 07 - Typescript Decorators](../07-typescript-decorators/README.md)**

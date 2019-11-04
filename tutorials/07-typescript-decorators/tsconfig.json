@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist/",
+        "noImplicitAny": true,
+        "experimentalDecorators": true,
+        "allowJs": true,
+        "module": "es6",
+        "target": "es6"
+    },
+    "exclude": [
+        "dist"
+    ]
+  }
