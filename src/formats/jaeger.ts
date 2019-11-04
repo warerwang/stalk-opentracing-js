@@ -42,7 +42,7 @@ export const JaegerFormat: IFormat = {
         let spanId: string;
 
         for (let key in carrier) {
-            if (key == JaegerFormatPropertyKeys.IDENTITY) {
+            if (key.toLowerCase() == JaegerFormatPropertyKeys.IDENTITY.toLowerCase()) {
                 const parts = carrier[key].split(':');
                 if (parts.length != 4) continue; // Ignore
                 traceId = parts[0];

@@ -41,12 +41,13 @@ export const TextMapFormat: IFormat = {
         let baggageItems: { [key: string]: string } = {};
 
         for (let key in carrier) {
-            if (key.indexOf(TextMapFormatPropertyKeys.BAGGAGE_ITEM_PREFIX) == 0) {
-                const realKey = key.replace(TextMapFormatPropertyKeys.BAGGAGE_ITEM_PREFIX, '');
+            const keyLowercase = key.toLowerCase();
+            if (keyLowercase.indexOf(TextMapFormatPropertyKeys.BAGGAGE_ITEM_PREFIX.toLowerCase()) == 0) {
+                const realKey = key.replace(new RegExp(TextMapFormatPropertyKeys.BAGGAGE_ITEM_PREFIX, 'ig'), '')
                 baggageItems[realKey] = carrier[key];
-            } else if (key == TextMapFormatPropertyKeys.TRACE_ID) {
+            } else if (keyLowercase == TextMapFormatPropertyKeys.TRACE_ID.toLowerCase()) {
                 traceId = carrier[key];
-            } else if (key == TextMapFormatPropertyKeys.SPAN_ID) {
+            } else if (keyLowercase == TextMapFormatPropertyKeys.SPAN_ID.toLowerCase()) {
                 spanId = carrier[key];
             }
         }
