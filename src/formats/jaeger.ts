@@ -3,7 +3,6 @@ import { SpanContext } from '../stalk/span-context'
 import { IFormat } from './interface';
 
 
-// Make http header compatible
 export const JaegerFormatPropertyKeys = {
     IDENTITY: 'uber-trace-id',
     BAGGAGE_ITEM_PREFIX: 'uberctx-' // TODO

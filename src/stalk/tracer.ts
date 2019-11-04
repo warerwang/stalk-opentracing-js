@@ -4,6 +4,7 @@ import SpanContext from './span-context';
 import BaseReporter from '../reporters/base';
 import { TextMapFormat } from '../formats/text-map';
 import { JaegerFormat, JaegerFormatName } from '../formats/jaeger';
+import { ZipkinB3Format, ZipkinB3FormatName } from '../formats/zipkin';
 
 
 const generateId = () => Math.random().toString(16).substring(2, 10) + Math.random().toString(16).substring(2, 10);
@@ -132,6 +133,8 @@ export class Tracer extends opentracing.Tracer {
                 return TextMapFormat.inject(spanContext, carrier);
             case JaegerFormatName:
                 return JaegerFormat.inject(spanContext, carrier);
+            case ZipkinB3FormatName:
+                return ZipkinB3Format.inject(spanContext, carrier);
             default:
                 console.error(`Could not inject context into carrier, unknown format "${format}"`, carrier);
         }
@@ -150,6 +153,9 @@ export class Tracer extends opentracing.Tracer {
             }
             case JaegerFormatName: {
                 return JaegerFormat.extract(carrier);
+            }
+            case ZipkinB3FormatName: {
+                return ZipkinB3Format.extract(carrier);
             }
             default: {
                 console.error(`Could not extract context from carrier, unknown carrier format "${format}"`, carrier);
