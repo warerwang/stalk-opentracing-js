@@ -1,3 +1,5 @@
 /src
+/test
+/tutorials
 tsconfig.json
 webpack.config.js
