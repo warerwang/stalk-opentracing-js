@@ -16,7 +16,14 @@
   ],
   "author": "Deniz Gurkaynak <dgurkaynak@gmail.com>",
   "license": "ISC",
-  "homepage": "https://github.com/dgurkaynak/stalk-opentracing-js",
+  "repository": {
+    "type" : "git",
+    "url" : "git+https://github.com/dgurkaynak/stalk-opentracing-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dgurkaynak/stalk-opentracing-js/issues"
+  },
+  "homepage": "https://github.com/dgurkaynak/stalk-opentracing-js#readme",
   "devDependencies": {
     "@types/debug": "^4.1.4",
     "@types/lodash": "^4.14.132",
