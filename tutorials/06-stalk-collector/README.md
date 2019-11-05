@@ -77,4 +77,4 @@ Then go to jaeger ui (http://localhost:16686/) and see the trace we just created
 
 ## Next
 
-[Tutorial 07 - Typescript Decorators](../07-typescript-decorators/README.md)
+[Tutorial 07 - Typescript Decorators](../07-typescript-decorators)

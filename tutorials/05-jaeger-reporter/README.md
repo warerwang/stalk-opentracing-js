@@ -66,4 +66,4 @@ Then go to jaeger ui (http://localhost:16686/) and see the trace we just created
 
 ## Next
 
-[Tutorial 06 - Stalk Collector](../06-stalk-collector/README.md)
+[Tutorial 06 - Stalk Collector](../06-stalk-collector)

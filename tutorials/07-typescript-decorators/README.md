@@ -168,4 +168,4 @@ class Demo {
 
 ## Next
 
-[Tutorial 08 - Context Propagation](../08-context-propagation/README.md)
+[Tutorial 08 - Context Propagation](../08-context-propagation)

@@ -68,4 +68,4 @@ Then go to zipkin ui (http://localhost:9411/zipkin/) and see the trace we just c
 
 ## Next
 
-[Tutorial 05 - JaegerReporter: Sending spans to Jaeger Backend](../05-jaeger-reporter/README.md)
+[Tutorial 05 - JaegerReporter: Sending spans to Jaeger Backend](../05-jaeger-reporter)

@@ -17,14 +17,14 @@ OpenTracing for javascript/typescript ecosystem
 
 ## Tutorials
 
-- [01 - Hello world to OpenTracing](./tutorials/01-opentracing-hello-world/README.md)
-- [02 - Using `jaeger-client-node`](./tutorials/02-jaeger-client-node/README.md)
-- [03 - Stalk Tracer](./tutorials/03-stalk-tracer/README.md)
-- [04 - Sending spans to Zipkin Backend](./tutorials/04-zipkin-reporter/README.md)
-- [05 - Sending spans to Jaeger Backend](./tutorials/05-jaeger-reporter/README.md)
-- [06 - Stalk Collector](./tutorials/06-stalk-collector/README.md)
-- [07 - Typescript Decorators](./tutorials/07-typescript-decorators/README.md)
-- [08 - Context Propagation](./tutorials/08-context-propagation/README.md)
+- [01 - Hello world to OpenTracing](./tutorials/01-opentracing-hello-world)
+- [02 - Using `jaeger-client-node`](./tutorials/02-jaeger-client-node)
+- [03 - Stalk Tracer](./tutorials/03-stalk-tracer)
+- [04 - Sending spans to Zipkin Backend](./tutorials/04-zipkin-reporter)
+- [05 - Sending spans to Jaeger Backend](./tutorials/05-jaeger-reporter)
+- [06 - Stalk Collector](./tutorials/06-stalk-collector)
+- [07 - Typescript Decorators](./tutorials/07-typescript-decorators)
+- [08 - Context Propagation](./tutorials/08-context-propagation)
 
 ## Building
 

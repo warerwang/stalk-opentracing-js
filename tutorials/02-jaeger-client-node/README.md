@@ -92,4 +92,4 @@ However `jaeger-client` package currently supports just node.js platform.
 
 ## Next
 
-[Tutorial 03 - Stalk Tracer](../03-stalk-tracer/README.md)
+[Tutorial 03 - Stalk Tracer](../03-stalk-tracer)

@@ -102,4 +102,4 @@ default tracer is noop tracer, so it does nothing. We need to use custom tracers
 
 ## Next
 
-[Tutorial 02 - Using Jaeger's offical node client](../02-jaeger-client-node/README.md)
+[Tutorial 02 - Using Jaeger's offical node client](../02-jaeger-client-node)
