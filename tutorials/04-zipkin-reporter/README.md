@@ -24,7 +24,7 @@ const zipkinReporter = new stalk.reporters.ZipkinReporter({
     // fetch: require('node-fetch')
     fetch: window.fetch.bind(window),
 
-    // Extra http headers
+    // Extra http headers, like basic authentication
     // requestHeaders: {},
 
     // Should convert logs to annotations (true by default)

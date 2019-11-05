@@ -6,7 +6,7 @@ This tutorial is written in node, there are two processes
 - `server.js`: Simple express server on port 3000
 - `client.js`: Makes a http request to localhost:3000
 
-For both processes, we set-up `stalk.Tracer` with `JaegerReporter` to reports local jaeger reporter.
+For both processes, we set-up a `stalk.Tracer` with `JaegerReporter` reporting to local jaeger reporter.
 
 ```js
 const stalkTracer = new stalk.Tracer();
@@ -110,8 +110,8 @@ const spanContext = stalkTracer.extract(stalk.formats.JaegerFormatName, headers)
 
 Jaeger propagation format is partially implemented:
 - Always sends 0 as `{parent-span-id}`
-- Always sends 1 (sampled) as flag
-- Baggage items not supported
+- Always sends 1 (sampled) as `flag`
+- Baggage items are not supported
 
 ## Running demo
 
