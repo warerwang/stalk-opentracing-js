@@ -1,7 +1,7 @@
 import BaseReporter from './base';
 import { Span, ISpanLog } from '../stalk/span';
 /**
- * A reporter that proxies span logs to `debug` package.
+ * A demo reporter that proxies span logs to `debug` package.
  * Span's `component` tag is used for debug package's
  * colorized namespace value. So be sure it's set.
  * Using this reporter is not enough to display log messages,

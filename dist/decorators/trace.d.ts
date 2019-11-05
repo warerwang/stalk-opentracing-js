@@ -6,6 +6,7 @@ declare type ArgumentTypes<T> = T extends (...args: infer U) => infer R ? U : ne
 declare type ReplaceReturnType<T, TNewReturn> = (...a: ArgumentTypes<T>) => TNewReturn;
 declare type CustomRelationHandler = (span: opentracing.Span, ...args: any[]) => Partial<opentracing.SpanOptions>;
 declare type PredefinedRelations = 'childOf' | 'followsFrom' | 'newTrace';
+declare type OpenTracingTracerGetter = () => opentracing.Tracer;
 /**
  * Main `@Trace()` decorator for class methods to be traced. Due to typescript decorator
  * restrictions, we cannot apply this decorator to normal functions :/
@@ -84,11 +85,13 @@ export declare function Trace<T extends CustomRelationHandler>(options: {
     operationName?: string;
     relation: PredefinedRelations;
     autoFinish: boolean;
+    getTracer?: OpenTracingTracerGetter;
 } | {
     operationName?: string;
     relation: 'custom';
     handler: T;
     autoFinish: boolean;
+    getTracer?: OpenTracingTracerGetter;
 }): (target: any, propertyName: string, propertyDesciptor: TypedPropertyDescriptor<ReplaceReturnType<T, any>>) => TypedPropertyDescriptor<ReplaceReturnType<T, any>>;
 export default Trace;
 /**
@@ -99,10 +102,12 @@ export default Trace;
 export declare function TraceAsync<T extends CustomRelationHandler>(options: {
     operationName?: string;
     relation: PredefinedRelations;
+    getTracer?: OpenTracingTracerGetter;
 } | {
     operationName?: string;
     relation: 'custom';
     handler: T;
+    getTracer?: OpenTracingTracerGetter;
 }): (target: any, propertyName: string, propertyDesciptor: TypedPropertyDescriptor<ReplaceReturnType<T, Promise<any>>>) => TypedPropertyDescriptor<ReplaceReturnType<T, Promise<any>>>;
 export declare function ChildOfRelationHandler(parentSpan: opentracing.Span, ...args: any[]): Partial<opentracing.SpanOptions>;
 export declare function FollowFromRelationHandler(parentSpan: opentracing.Span, ...args: any[]): Partial<opentracing.SpanOptions>;
