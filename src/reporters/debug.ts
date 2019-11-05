@@ -5,7 +5,7 @@ import { Span, ISpanLog } from '../stalk/span';
 
 
 /**
- * A reporter that proxies span logs to `debug` package.
+ * A demo reporter that proxies span logs to `debug` package.
  * Span's `component` tag is used for debug package's
  * colorized namespace value. So be sure it's set.
  * Using this reporter is not enough to display log messages,
@@ -49,15 +49,7 @@ export class DebugReporter extends BaseReporter {
             debugInstance = this.debugInstances[component] = this.debugFactory(component);
         }
 
-        const level = log.fields.level || 'NO-LEVEL';
-        const message = log.fields.message || 'NO-MESSAGE';
-
-        // Prevent printing null/undefined
-        if (log.fields.payload) {
-            debugInstance(`[${level}] ${message}`, ...log.fields.payload);
-        } else {
-            debugInstance(`[${level}] ${message}`);
-        }
+        debugInstance(log.fields);
     }
 
 

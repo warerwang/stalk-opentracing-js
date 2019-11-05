@@ -1,21 +1,18 @@
-import * as opentracing from '../opentracing/index';
 import BaseReporter from './base';
 import { Span, ISpanLog } from '../stalk/span';
 
 
 
 /**
- * A reporter that forwards span logs to `winston` logger instance. All the winston
+ * A demo reporter that forwards span logs to `winston` logger instance. All the winston
  * transporting stuff must be set before using this reporter.
  *
  * How it works:
  * Passed logger's `.log(data)` method will be called (winston uses this syntax
  * for a long time, but any other object has this method signature will work),
  * where `data` is:
- *  - `component` => Span's `component` tag
  *  - `level` => Log level: silly, debug, info, warn, error
  *  - `message` => Log message
- *  - `payload` => any payload if specified
  */
 export class WinstonReporter extends BaseReporter {
     /** Just accept logs */
@@ -40,15 +37,14 @@ export class WinstonReporter extends BaseReporter {
      * Note to self: `BasicSpan._log()` calls this method.
      */
     recieveSpanLog(span: Span, log: ISpanLog) {
-        const component = span.getTag(opentracing.Tags.COMPONENT) || 'NO-COMPONENT';
-        const level = log.fields.level || 'NO-LEVEL';
-        const message = log.fields.message || 'NO-MESSAGE';
-
+        /**
+         * Winston only requires `level` and `message` fields in log object
+         * https://github.com/winstonjs/winston#streams-objectmode-and-info-objects
+         */
         this.winstonLogger.log({
-            component,
-            level,
-            message,
-            payload: log.fields.payload
+            level: log.fields.level || 'info',
+            message: log.fields.message || '',
+            ...log.fields
         });
     }
 
