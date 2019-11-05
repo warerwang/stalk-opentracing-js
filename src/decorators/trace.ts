@@ -11,6 +11,7 @@ type ArgumentTypes<T> = T extends (...args: infer U ) => infer R ? U: never;
 type ReplaceReturnType<T, TNewReturn> = (...a: ArgumentTypes<T>) => TNewReturn;
 type CustomRelationHandler = (span: opentracing.Span, ...args: any[]) => Partial<opentracing.SpanOptions>;
 type PredefinedRelations = 'childOf' | 'followsFrom' | 'newTrace';
+type OpenTracingTracerGetter = () => opentracing.Tracer;
 
 
 /**
@@ -90,12 +91,14 @@ type PredefinedRelations = 'childOf' | 'followsFrom' | 'newTrace';
 export function Trace<T extends CustomRelationHandler>(options: {
     operationName?: string,
     relation: PredefinedRelations,
-    autoFinish: boolean
+    autoFinish: boolean,
+    getTracer?: OpenTracingTracerGetter
 } | {
     operationName?: string,
     relation: 'custom',
     handler: T,
-    autoFinish: boolean
+    autoFinish: boolean,
+    getTracer?: OpenTracingTracerGetter
 }) {
     // Handler method should be same signature with original traced method,
     // but it should return partial of opentracing.SpanOptions.
@@ -115,7 +118,8 @@ export function Trace<T extends CustomRelationHandler>(options: {
             operationName?: string,
             relation: string,
             handler?: CustomRelationHandler,
-            autoFinish?: boolean
+            autoFinish?: boolean,
+            getTracer?: OpenTracingTracerGetter
         };
 
         // Pre-defined relations
@@ -135,11 +139,31 @@ export function Trace<T extends CustomRelationHandler>(options: {
             }
         }
 
+        // Gathering tracer to be used, will be called with same arguments as decorated method
+        const getTracer: (...args: any[]) => opentracing.Tracer = (...args) => {
+            // Check first whether passed span has a `tracer()` method (span-like check)
+            if (args[0] && typeof args[0].tracer == 'function') {
+                return args[0].tracer();
+            }
+
+            // If `options.getTracer` avaliable, use it
+            if (options.getTracer && typeof options.getTracer == 'function') {
+                return options.getTracer();
+            }
+
+            // Get global.opentracing.globalTracer() if exists
+            const globalOpentracingRef = getGlobal().opentracing;
+            if (globalOpentracingRef && typeof globalOpentracingRef.globalTracer == 'function') {
+                return globalOpentracingRef.globalTracer();
+            }
+
+            // Last resort
+            return opentracing.globalTracer();
+        };
+
         // Replace the method
         propertyDesciptor.value = function(...args: any[]) {
-            const parentSpan: opentracing.Span = args[0] instanceof opentracing.Span ? args[0] : null;
-            const opentracingRef = getGlobal().opentracing || opentracing;
-            const tracer = parentSpan ? parentSpan.tracer() : opentracingRef.globalTracer();
+            const tracer = getTracer(args);
             let newSpanOptions: opentracing.SpanOptions = {};
 
             try {
@@ -220,11 +244,13 @@ export default Trace;
  */
 export function TraceAsync<T extends CustomRelationHandler>(options: {
     operationName?: string,
-    relation: PredefinedRelations
+    relation: PredefinedRelations,
+    getTracer?: OpenTracingTracerGetter
 } | {
     operationName?: string,
     relation: 'custom',
-    handler: T
+    handler: T,
+    getTracer?: OpenTracingTracerGetter
 }) {
     // Original method should return a promise
     type AsyncTracedMethod = ReplaceReturnType<T, Promise<any>>;
