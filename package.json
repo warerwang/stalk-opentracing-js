@@ -1,7 +1,7 @@
 {
   "name": "stalk-opentracing",
   "version": "0.0.3",
-  "description": "",
+  "description": "OpenTracing for javascript/typescript ecosystem",
   "main": "dist/node.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -9,9 +9,14 @@
     "postinstall": "./scripts/symlink.sh",
     "test": "mocha"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "opentracing",
+    "jaeger",
+    "zipkin"
+  ],
+  "author": "Deniz Gurkaynak <dgurkaynak@gmail.com>",
   "license": "ISC",
+  "homepage": "https://github.com/dgurkaynak/stalk-opentracing-js",
   "devDependencies": {
     "@types/debug": "^4.1.4",
     "@types/lodash": "^4.14.132",
