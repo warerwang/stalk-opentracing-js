@@ -241,6 +241,9 @@ export function ChildOfRelationHandler(parentSpan: opentracing.Span, ...args: an
     if (!parentSpan) {
         throw new Error(`Traced method's first argument must be a span`);
     }
+    if (typeof parentSpan.context != 'function') {
+        throw new Error(`Passed span is not OpenTracing-compatible, it does not context() method`);
+    }
     return { childOf: parentSpan.context() };
 }
 
@@ -248,6 +251,9 @@ export function ChildOfRelationHandler(parentSpan: opentracing.Span, ...args: an
 export function FollowFromRelationHandler(parentSpan: opentracing.Span, ...args: any[]): Partial<opentracing.SpanOptions> {
     if (!parentSpan) {
         throw new Error(`Traced method's first argument must be a span`);
+    }
+    if (typeof parentSpan.context != 'function') {
+        throw new Error(`Passed span is not OpenTracing-compatible, it does not context() method`);
     }
     return { references: [ opentracing.followsFrom(parentSpan.context()) ] };
 }
