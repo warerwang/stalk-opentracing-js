@@ -25,6 +25,7 @@ OpenTracing for javascript/typescript ecosystem
 - [06 - Stalk Collector](./tutorials/06-stalk-collector)
 - [07 - Typescript Decorators](./tutorials/07-typescript-decorators)
 - [08 - Context Propagation](./tutorials/08-context-propagation)
+- [09 - Context Propagation w/ Typescript Decorators](./tutorials/09-context-propagation-ts-decorators)
 
 ## Building
 
