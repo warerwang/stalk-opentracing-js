@@ -11,7 +11,7 @@ const NoopTracer = new opentracing.Tracer();
  */
 type ArgumentTypes<T> = T extends (...args: infer U ) => infer R ? U: never;
 type ReplaceReturnType<T, TNewReturn> = (...a: ArgumentTypes<T>) => TNewReturn;
-type CustomRelationHandler = (span: opentracing.Span, ...args: any[]) => Partial<opentracing.SpanOptions>;
+type Handler = (span: opentracing.Span, ...args: any[]) => opentracing.Span;
 type PredefinedRelations = 'childOf' | 'followsFrom' | 'newTrace';
 
 
@@ -89,7 +89,7 @@ type PredefinedRelations = 'childOf' | 'followsFrom' | 'newTrace';
  * }
  * ```
  */
-export function Trace<T extends CustomRelationHandler>(options: {
+export function Trace<T extends Handler>(options: {
     operationName?: string,
     relation: PredefinedRelations,
     autoFinish: boolean
@@ -116,7 +116,7 @@ export function Trace<T extends CustomRelationHandler>(options: {
         const optionsAs = options as {
             operationName?: string,
             relation: string,
-            handler?: CustomRelationHandler,
+            handler?: Handler,
             autoFinish?: boolean
         };
 
@@ -124,46 +124,25 @@ export function Trace<T extends CustomRelationHandler>(options: {
         if (options.relation != 'custom') {
             switch (options.relation) {
                 case 'childOf':
-                    optionsAs.handler = ChildOfRelationHandler;
+                    optionsAs.handler = ChildOfHandler;
                     break;
                 case 'followsFrom':
-                    optionsAs.handler = FollowFromRelationHandler;
+                    optionsAs.handler = FollowFromHandler;
                     break;
                 case 'newTrace':
-                    optionsAs.handler = NewTraceRelationHandler;
+                    optionsAs.handler = NewTraceHandler;
                     break;
                 default:
                     throw new Error(`Unexpected relation type "${options.relation}"`);
             }
         }
 
-        // Gathering tracer to be used, will be called with same arguments as decorated method
-        const getTracer: (...args: any[]) => opentracing.Tracer = (...args) => {
-            // Check first whether passed span has a `tracer()` method (span-like check)
-            if (args[0] && typeof args[0].tracer == 'function') {
-                return args[0].tracer();
-            }
-
-            // Get global.opentracing.globalTracer() if exists
-            const globalOpentracingRef = getGlobal().opentracing;
-            if (globalOpentracingRef && typeof globalOpentracingRef.globalTracer == 'function') {
-                return globalOpentracingRef.globalTracer();
-            }
-
-            // Last resort
-            return opentracing.globalTracer();
-        };
-
         // Replace the method
         propertyDesciptor.value = function(...args: any[]) {
-            const tracer = getTracer(args);
-            let newSpanOptions: opentracing.SpanOptions = {};
+            let newSpan: opentracing.Span;
 
             try {
-                const handlerResultOptions = optionsAs.handler.apply(this, args);
-                newSpanOptions = {
-                    ...handlerResultOptions
-                };
+                newSpan = optionsAs.handler.apply(this, args);
             } catch (err) {
                 console.error(`Unexpected error in traced method "${options.operationName}"s relation handler`);
                 throw err;
@@ -172,14 +151,11 @@ export function Trace<T extends CustomRelationHandler>(options: {
             // Inject `@Tag` to tags
             const tags = getTags(this);
             if (tags) {
-                newSpanOptions.tags = {
-                    ...tags,
-                    ...newSpanOptions.tags // The tags that handler set, can override component
-                };
+                newSpan.addTags(tags); // This overrides the tags set in the handler!
             }
 
-            // Start a new span
-            const newSpan = tracer.startSpan(options.operationName, newSpanOptions);
+            // Overwrite operation name
+            newSpan.setOperationName(options.operationName);
 
             // Replace the first argument with new context
             args.splice(0, 1, newSpan); // TODO: What if args == [] ???
@@ -235,7 +211,7 @@ export default Trace;
  * omit `autoFinish` option, it's enabled by default. Also type checking is set,
  * if method is not returning promise, compiler will give error.
  */
-export function TraceAsync<T extends CustomRelationHandler>(options: {
+export function TraceAsync<T extends Handler>(options: {
     operationName?: string,
     relation: PredefinedRelations
 } | {
@@ -254,29 +230,64 @@ export function TraceAsync<T extends CustomRelationHandler>(options: {
 }
 
 
-export function ChildOfRelationHandler(parentSpan: opentracing.Span, ...args: any[]): Partial<opentracing.SpanOptions> {
-    if (!parentSpan) {
-        throw new Error(`Traced method's first argument must be a span`);
+// Gathering tracer to be used, will be called with same arguments as decorated method
+export function getTracer(span: any): opentracing.Tracer {
+    // Check first whether passed span has a `tracer()` method (span-like check)
+    if (hasTracerMethod(span)) {
+        return span.tracer();
     }
-    if (typeof parentSpan.context != 'function') {
-        throw new Error(`Passed span is not OpenTracing-compatible, it does not context() method`);
+
+    // Get global.opentracing.globalTracer() if exists
+    const globalOpentracingRef = getGlobal().opentracing;
+    if (globalOpentracingRef && typeof globalOpentracingRef.globalTracer == 'function') {
+        return globalOpentracingRef.globalTracer();
     }
-    return { childOf: parentSpan.context() };
+
+    // Last resort, use embeded-opentracing
+    return opentracing.globalTracer();
+};
+
+
+// Checks the `thing` has `.tracer()` method
+function hasTracerMethod(span: any) {
+    return span && span.tracer && (typeof span.tracer == 'function');
 }
 
 
-export function FollowFromRelationHandler(parentSpan: opentracing.Span, ...args: any[]): Partial<opentracing.SpanOptions> {
-    if (!parentSpan) {
-        throw new Error(`Traced method's first argument must be a span`);
-    }
-    if (typeof parentSpan.context != 'function') {
-        throw new Error(`Passed span is not OpenTracing-compatible, it does not context() method`);
-    }
-    return { references: [ opentracing.followsFrom(parentSpan.context()) ] };
+// Checks the `thing` has `.context()` method
+function hasContextMethod(span: any) {
+    return span && span.context && (typeof span.context == 'function');
 }
 
 
-export function NewTraceRelationHandler(parentSpan: opentracing.Span, ...args: any[]): Partial<opentracing.SpanOptions> {
+export function ChildOfHandler(parentSpan: opentracing.Span, ...args: any[]): opentracing.Span {
+    if (!parentSpan) {
+        throw new Error(`Traced method's first argument must be a span`);
+    }
+    if (!hasContextMethod(parentSpan)) {
+        throw new Error(`Passed span is not OpenTracing-compatible, it does not context() method`);
+    }
+
+    const tracer = getTracer(parentSpan);
+    return tracer.startSpan('', { childOf: parentSpan.context() });
+}
+
+
+export function FollowFromHandler(parentSpan: opentracing.Span, ...args: any[]): opentracing.Span {
+    if (!parentSpan) {
+        throw new Error(`Traced method's first argument must be a span`);
+    }
+    if (!hasContextMethod(parentSpan)) {
+        throw new Error(`Passed span is not OpenTracing-compatible, it does not context() method`);
+    }
+
+    const tracer = getTracer(parentSpan);
+    return tracer.startSpan('', { references: [ opentracing.followsFrom(parentSpan.context()) ] });
+}
+
+
+export function NewTraceHandler(parentSpan: opentracing.Span, ...args: any[]): opentracing.Span {
     // Parent span is ignored
-    return {};
+    const tracer = getTracer(null);
+    return tracer.startSpan('', {});
 }
