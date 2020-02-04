@@ -100,7 +100,7 @@ export function Trace<T extends Handler>(options: {
     autoFinish: boolean
 }) {
     // Handler method should be same signature with original traced method,
-    // but it should return partial of opentracing.SpanOptions.
+    // but it should return a opentracing.Span.
     // As far as I've tried, we can not force handler's signature according to
     // original method. So, we're going from the other way.
     type TracedMethod = ReplaceReturnType<T, any>;
@@ -158,7 +158,7 @@ export function Trace<T extends Handler>(options: {
             newSpan.setOperationName(options.operationName);
 
             // Replace the first argument with new context
-            args.splice(0, 1, newSpan); // TODO: What if args == [] ???
+            args.splice(0, 1, newSpan);
 
             // Execute original method
             try {
@@ -179,7 +179,14 @@ export function Trace<T extends Handler>(options: {
                         return val;
                     }).catch((err: any) => {
                         // Promise is rejected
-                        newSpan.log({ level: 'error', event: 'error', message: err.message, stack: err.stack, 'error.kind': err.name });
+                        // https://github.com/opentracing/specification/blob/master/semantic_conventions.md
+                        newSpan.log({
+                            event: 'error',
+                            error: err.message,
+                            message: err.message,
+                            stack: err.stack,
+                            'error.kind': err.name
+                        });
                         newSpan.setTag(opentracing.Tags.ERROR, true);
                         newSpan.finish();
                         throw err;
@@ -191,7 +198,14 @@ export function Trace<T extends Handler>(options: {
                 return rv;
             } catch (err) {
                 // Method throwed an error
-                newSpan.log({ level: 'error', event: 'error', message: err.message, stack: err.stack, 'error.kind': err.name });
+                // https://github.com/opentracing/specification/blob/master/semantic_conventions.md
+                newSpan.log({
+                    event: 'error',
+                    error: err.message || err.name,
+                    message: err.message,
+                    stack: err.stack,
+                    'error.kind': err.name
+                });
                 newSpan.setTag(opentracing.Tags.ERROR, true);
                 newSpan.finish();
                 throw err;
