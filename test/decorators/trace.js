@@ -159,7 +159,7 @@ describe('Trace Decorator', function() {
         expect(Object.keys(resultSpan.tags)).to.have.lengthOf(1);
         expect(resultSpan.tags.error).to.equal(true);
         expect(resultSpan.logs).to.have.lengthOf(1);
-        expect(resultSpan.logs[0].fields.level).to.equal('error');
+        expect(resultSpan.logs[0].fields.event).to.equal('error');
         expect(resultSpan.finishTime).to.be.below(now + 1);
     });
 
@@ -188,7 +188,7 @@ describe('Trace Decorator', function() {
             expect(Object.keys(resultSpan.tags)).to.have.lengthOf(1);
             expect(resultSpan.tags.error).to.equal(true);
             expect(resultSpan.logs).to.have.lengthOf(1);
-            expect(resultSpan.logs[0].fields.level).to.equal('error');
+            expect(resultSpan.logs[0].fields.event).to.equal('error');
             expect(resultSpan.logs[0].fields.message).to.equal('Ooops');
             expect(resultSpan.finishTime).to.be.below(now + 1);
         }
@@ -218,7 +218,7 @@ describe('Trace Decorator', function() {
             expect(Object.keys(resultSpan.tags)).to.have.lengthOf(1);
             expect(resultSpan.tags.error).to.equal(true);
             expect(resultSpan.logs).to.have.lengthOf(1);
-            expect(resultSpan.logs[0].fields.level).to.equal('error');
+            expect(resultSpan.logs[0].fields.event).to.equal('error');
             expect(resultSpan.logs[0].fields.message).to.equal('Ooops');
             expect(resultSpan.finishTime).to.be.below(now + 1);
         }
