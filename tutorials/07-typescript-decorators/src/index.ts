@@ -36,14 +36,13 @@ class Demo {
     /**
      * `@Trace()` decorator to trace methods. The only rule to keep in mind is:
      * **Every `@Trace()`d method should take a `opentracing.Span`**
-     * **instance as its first argument**. If it does not typescript will give
+     * **instance as its first parameter**. If it does not typescript will give
      * you compiler error about your method's signature.
      *
      * `@Trace()` decorator takes an options object that can have 3 properties:
      *   - `operationName`: A string that specifies span's operation name.
      *                      It can be omitted, function's name will be used by default.
-     *   - **`relation`**: Can be one of: `newTrace`, `childOf` and `followsFrom` or `custom`.
-     *                     It's required.
+     *   - `relation`: Can be one of: `newTrace`, `childOf` and `followsFrom`.
      *   - **`autoFinish`**: A boolean that if `true`, return value of the decorating function
      *                       If it's promise-like object, stalk will wait until it settles and
      *                       then marks span automatically as finished. If it's not promise-like
