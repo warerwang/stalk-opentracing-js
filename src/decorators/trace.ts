@@ -55,12 +55,11 @@ type PredefinedRelations = 'childOf' | 'followsFrom' | 'newTrace';
  * ```
  *
  * `relation` must be set to a string. It can be one of pre-defined some relations: `childOf`,
- * `followsFrom`, `newTrace`, or it can be `custom`. If `custom` is selected, you should
+ * `followsFrom`, `newTrace`. If you don't want to use pre-defined relation, you should
  * pass another `handler` option which is a function takes the same arguments with the decorated function.
- * It will called before original method and it must be return some part of span options
- * (`opentracing.SpanOptions`) that defines the relation to other spans.
+ * It will called before original method and it must be return a span instance (`opentracing.Span`).
  * If you want to extract span context from some sort of external communication,
- * you should set your custom relation handler.
+ * you should set your custom handler.
  *
  * If `autoFinish` is set true, return value of the method will be checked. If it is promise-like
  * object, we will wait until it settles. If it's resolved, current span will be finished normally. If it's
@@ -95,7 +94,6 @@ export function Trace<T extends Handler>(options: {
     autoFinish: boolean
 } | {
     operationName?: string,
-    relation: 'custom',
     handler: T,
     autoFinish: boolean
 }) {
@@ -115,14 +113,14 @@ export function Trace<T extends Handler>(options: {
 
         const optionsAs = options as {
             operationName?: string,
-            relation: string,
+            relation?: string,
             handler?: Handler,
             autoFinish?: boolean
         };
 
         // Pre-defined relations
-        if (options.relation != 'custom') {
-            switch (options.relation) {
+        if (optionsAs.relation) {
+            switch (optionsAs.relation) {
                 case 'childOf':
                     optionsAs.handler = ChildOfHandler;
                     break;
@@ -133,8 +131,12 @@ export function Trace<T extends Handler>(options: {
                     optionsAs.handler = NewTraceHandler;
                     break;
                 default:
-                    throw new Error(`Unexpected relation type "${options.relation}"`);
+                    throw new Error(`Unexpected relation type "${optionsAs.relation}"`);
             }
+        }
+
+        if (typeof optionsAs.handler != 'function') {
+            throw new Error(`Expected handler type "${typeof optionsAs.handler}"`);
         }
 
         // Replace the method
@@ -144,7 +146,7 @@ export function Trace<T extends Handler>(options: {
             try {
                 newSpan = optionsAs.handler.apply(this, args);
             } catch (err) {
-                console.error(`Unexpected error in traced method "${options.operationName}"s relation handler`);
+                console.error(`Unexpected error in traced method "${options.operationName}"s handler`);
                 throw err;
             }
 
@@ -230,7 +232,6 @@ export function TraceAsync<T extends Handler>(options: {
     relation: PredefinedRelations
 } | {
     operationName?: string,
-    relation: 'custom',
     handler: T
 }) {
     // Original method should return a promise
