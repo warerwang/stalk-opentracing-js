@@ -26,12 +26,12 @@
   "homepage": "https://github.com/dgurkaynak/stalk-opentracing-js#readme",
   "devDependencies": {
     "chai": "^4.2.0",
-    "mocha": "^6.1.4",
-    "opentracing": "0.14.3",
-    "ts-loader": "^6.0.1",
-    "typescript": "^3.4.5",
-    "webpack": "^4.32.2",
-    "webpack-cli": "^3.3.2"
+    "mocha": "^7.0.1",
+    "opentracing": "0.14.4",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.7.5",
+    "webpack": "^4.41.6",
+    "webpack-cli": "^3.3.11"
   },
   "dependencies": {}
 }
