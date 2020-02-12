@@ -15,7 +15,7 @@
     "zipkin"
   ],
   "author": "Deniz Gurkaynak <dgurkaynak@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dgurkaynak/stalk-opentracing-js.git"
