@@ -4,6 +4,7 @@
         "sourceMap": true,
         "declaration": true,
         "noImplicitAny": true,
+        "moduleResolution": "node",
         "experimentalDecorators": true,
         "module": "es6",
         "target": "es5"
