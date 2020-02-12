@@ -25,7 +25,6 @@
   },
   "homepage": "https://github.com/dgurkaynak/stalk-opentracing-js#readme",
   "devDependencies": {
-    "@types/debug": "^4.1.4",
     "chai": "^4.2.0",
     "mocha": "^6.1.4",
     "opentracing": "0.14.3",

@@ -27,7 +27,7 @@ export class DebugReporter extends BaseReporter {
      * Keep references of created debug instances to prevent memory leak:
      * https://github.com/visionmedia/debug/issues/678
      */
-    private debugInstances: { [key: string]: debug.Debugger } = {};
+    private debugInstances: { [key: string]: any } = {};
 
 
     constructor(debugFactory: any) {
