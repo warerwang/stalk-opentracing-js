@@ -1,4 +1,4 @@
-import * as opentracing from '../opentracing/index';
+import * as opentracing from 'opentracing';
 import Span from './span';
 import SpanContext from './span-context';
 import BaseReporter from '../reporters/base';

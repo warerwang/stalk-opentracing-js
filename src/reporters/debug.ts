@@ -1,4 +1,4 @@
-import * as opentracing from '../opentracing/index';
+import * as opentracing from 'opentracing';
 import BaseReporter from './base';
 import { Span, ISpanLog } from '../stalk/span';
 

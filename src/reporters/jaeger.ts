@@ -1,4 +1,4 @@
-import * as opentracing from '../opentracing/index';
+import * as opentracing from 'opentracing';
 import { Span } from '../stalk/span';
 import { BaseReporter } from './base';
 import * as Thrift from '../utils/thrift/index';
