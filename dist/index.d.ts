@@ -1,3 +1,3 @@
-import * as opentracing from './opentracing/index';
+import * as opentracing from 'opentracing';
 import * as stalk from './stalk';
 export { opentracing, stalk };

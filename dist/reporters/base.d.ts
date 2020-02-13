@@ -1,4 +1,4 @@
-import * as opentracing from '../opentracing/index';
+import * as opentracing from 'opentracing';
 import { ISpanLog } from '../stalk/span';
 /**
  * Base reporter class and also behaves like no-op reporter.

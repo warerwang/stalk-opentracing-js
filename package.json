@@ -1,6 +1,6 @@
 {
   "name": "stalk-opentracing",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "OpenTracing for javascript/typescript ecosystem",
   "main": "dist/node.js",
   "types": "dist/index.d.ts",

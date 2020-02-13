@@ -1,4 +1,4 @@
-import * as opentracing from '../opentracing/index';
+import * as opentracing from 'opentracing';
 export declare class SpanContext extends opentracing.SpanContext {
     private _traceId;
     private _spanId;
@@ -16,7 +16,7 @@ export declare class SpanContext extends opentracing.SpanContext {
     addBaggageItems(items: {
         [key: string]: string;
     }): void;
-    readonly baggageItems: {
+    get baggageItems(): {
         [key: string]: string;
     };
 }

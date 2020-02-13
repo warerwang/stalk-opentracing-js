@@ -1,4 +1,4 @@
-import * as opentracing from '../opentracing/index';
+import * as opentracing from 'opentracing';
 import Tracer from './tracer';
 import SpanContext from './span-context';
 export interface ISpanLog {

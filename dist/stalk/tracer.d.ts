@@ -1,4 +1,4 @@
-import * as opentracing from '../opentracing/index';
+import * as opentracing from 'opentracing';
 import Span from './span';
 import SpanContext from './span-context';
 import BaseReporter from '../reporters/base';
@@ -16,7 +16,7 @@ export declare class Tracer extends opentracing.Tracer {
      * Reporter instances to report when a span is created.
      */
     protected _reporters: BaseReporter[];
-    readonly reporters: BaseReporter[];
+    get reporters(): BaseReporter[];
     /**
      * Updates the constant tags with Object.assign fashion.
      */
