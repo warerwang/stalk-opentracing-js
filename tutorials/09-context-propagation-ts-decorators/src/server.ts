@@ -1,4 +1,4 @@
-import { opentracing, stalk } from '../../../node.js';
+import { opentracing, stalk } from '../../../';
 import fetch from 'node-fetch';
 import * as express from 'express';
 
@@ -13,6 +13,7 @@ const { Trace, TraceAsync } = stalk.decorators.Trace;
  * Set-up stalk tracer with jaeger reporter.
  */
 const stalkTracer = new stalk.Tracer();
+const noopTracer = new opentracing.Tracer();
 opentracing.initGlobalTracer(stalkTracer);
 const globalTracer = opentracing.globalTracer();
 
@@ -20,9 +21,9 @@ const jaegerReporter = new stalk.reporters.JaegerReporter({
     jaegerBaseUrl: 'http://localhost:14268',
     process: {
         serviceName: 'my-awesome-server',
-        tags: { port }
+        tags: { port: `${port}` }
     },
-    fetch: fetch,
+    fetch: fetch as any,
 });
 
 stalkTracer.addReporter(jaegerReporter);
@@ -41,10 +42,14 @@ const customRelationHandler = (span: opentracing.Span, req: express.Request, res
     if (!spanContext) {
         // If context is not found (http headers are absent)
         // Start a new trace
-        return {};
+        return stalkTracer.startSpan('', {});
+
+        // Or, you may want not to trace at all,
+        // In that case, you can use noop tracer
+        return noopTracer.startSpan('');
     }
 
-    return { childOf: spanContext };
+    return stalkTracer.startSpan('', { childOf: spanContext });
 }
 
 
@@ -64,7 +69,7 @@ class ServerDemo {
         this.app.listen(port, () => console.log(`Example app listening on port ${port}!`));
     }
 
-    @TraceAsync({ relation: 'custom', handler: customRelationHandler })
+    @TraceAsync({ handler: customRelationHandler })
     async handleGetEndpoint(span: opentracing.Span, req: express.Request, res: express.Response) {
         await sleep(500);
         span.log({ message: 'Making a fake db request' });
@@ -74,7 +79,7 @@ class ServerDemo {
         console.log('GET /endpoint');
     }
 
-    @TraceAsync({ relation: 'custom', handler: customRelationHandler })
+    @TraceAsync({ handler: customRelationHandler })
     async handleGetEndpoint2(span: opentracing.Span, req: express.Request, res: express.Response) {
         await sleep(100);
         res.send('This is endpoint 2');

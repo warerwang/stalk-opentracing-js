@@ -1,4 +1,4 @@
-import { opentracing, stalk } from '../../../node.js';
+import { opentracing, stalk } from '../../../';
 import fetch from 'node-fetch';
 
 const sleep = (duration: number) => new Promise(resolve => setTimeout(resolve, duration));
@@ -20,7 +20,7 @@ const jaegerReporter = new stalk.reporters.JaegerReporter({
         serviceName: 'my-awesome-client',
         tags: { }
     },
-    fetch: fetch,
+    fetch: fetch as any,
 });
 
 stalkTracer.addReporter(jaegerReporter);

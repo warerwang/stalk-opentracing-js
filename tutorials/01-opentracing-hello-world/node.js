@@ -1,5 +1,5 @@
 // Stalk comes with opentracing built-in
-const { opentracing } = require('../../dist');
+const { opentracing } = require('../../');
 const sleep = (duration) => new Promise(resolve => setTimeout(resolve, duration));
 
 // Get global tracer, by default it's noop tracer

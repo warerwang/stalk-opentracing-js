@@ -2,12 +2,13 @@
 
 Stalk is written in typescript, so it comes with type definitions, along with some class and method decorators that deal with span creation, relation handling and finishing them.
 
-At first, you need to enable `experimentalDecorators` flag in your `tsconfig.json` file.
+At first, you need to enable `experimentalDecorators` flag and set `moduleResolution` to `node` in your `tsconfig.json` file.
 
 ```json
 {
     "compilerOptions": {
-        "experimentalDecorators": true
+        "experimentalDecorators": true,
+        "moduleResolution": "node",
     }
 }
 ```
@@ -85,8 +86,8 @@ class Demo {
 
 Here, `@Trace` decorator wraps the original `main` method. When the decorated method is called:
 - Since it's relation type is set to `newTrace`, a root span is automatically created & started from global tracer `opentracing.globalTracer()`
-- Set it's operation name as `main`
 - Checks its class whether decorated by `@Tag`, if so adds them to span tags
+- Set it's operation name as `main`
 - Original method is called by passing the just-created span as `span` argument
 - Since `autoFinish` is set to `true`, return value of the original method is checked
     - If it's promise-like object, wait until it settles, automatically finishes the span
@@ -98,8 +99,8 @@ Here, `@Trace` decorator wraps the original `main` method. When the decorated me
 
 | option | description |
 | - | - |
-| `operationName` | A string that specifies span's operation name. It can be omitted, function's name will be used by default. |
-| `relation` | Can be one of: `newTrace`, `childOf` and `followsFrom`. Of omitted, `handler` options must be set to a function that takes the same parameters as original method, and it must create & start and return a `opentracing.Span` instance. |
+| `operationName` | A string that specifies span's operation name. It can be omitted, method name will be used by default. |
+| `relation` | Can be one of: `newTrace`, `childOf` and `followsFrom`. If omitted, `handler` options must be set to a function that takes the same parameters as original method, and it must create & start and return a `opentracing.Span` instance. |
 | **`autoFinish`** | A boolean that enables auto finishing span feature. If this is set to `false`, it's your responsibility to call `span.finish()`. It's required. |
 
 Our `main` function now takes a span instance as first argument as the only rule dictates. However it's relation type is set to `newTrace`, so it (decorated method) does not need to be called by passing a parent span. A new span is automatically generated and it will be automatically passed to method by the decorator. To indicate that, you need to explicitly pass `null` as it's span argument when calling the decorated method.

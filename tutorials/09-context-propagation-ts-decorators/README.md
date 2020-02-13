@@ -49,27 +49,32 @@ async handleGetEndpoint(
 }
 ```
 
-Since we want to extract span context from `req.headers`, we need to set `relation` option to `custom`. When it is set to `custom`, `handler` option is also required, it must be a function that **takes the same arguments with original method** and it must return an object in [`SpanOptions` interface](https://opentracing-javascript.surge.sh/interfaces/spanoptions.html), which is the same object when creating new spans: `tracer.startSpan(operationName, spanOptions)`
+Since we want to extract span context from `req.headers`, we need to handle span creation manually. For that case, we will omit `relation` and use `handler` option, it must be a function that **takes the same arguments with original method** and it must return [an `opentracing.Span` instance](https://opentracing-javascript.surge.sh/classes/span.html).
 
 ```ts
 @TraceAsync({
-    // Use custom relation
-    relation: 'custom',
-
     // Handler function takes the same arguments with the original method
     handler: (span: opentracing.Span, req: express.Request, res: express.Response) => {
         // Extract context
         const spanContext = stalkTracer.extract(opentracing.FORMAT_TEXT_MAP, req.headers);
 
+        // Get the global tracer
+        const tracer = opentracing.globalTracer();
+
         // If context is not found (http headers are absent)
         // Start a new trace
         if (!spanContext) {
-            return {};
+            return tracer.startSpan('', {});
+
+            // Alternatively, you may want not to trace at all
+            // In that case, use opentracing's default noop tracer
+            // const noopTracer = new opentracing.Tracer();
+            // return noopTracer.startSpan('');
         }
 
         // If context exists, start a new span as the
         // child of incoming span context
-        return { childOf: spanContext };
+        return tracer.startSpan('', { childOf: spanContext });
     }
 })
 async handleGetEndpoint(span: opentracing.Span, req: express.Request, res: express.Response) {
@@ -82,7 +87,11 @@ async handleGetEndpoint(span: opentracing.Span, req: express.Request, res: expre
 }
 ```
 
-Custom relation handler is called by the decorator **before** the original method is called with the same arguments. The handler should return a [span options object](https://opentracing-javascript.surge.sh/interfaces/spanoptions.html) which will be used when creating a span from global tracer.
+Handler function is called by the decorator **before** the original method is called, and with the same arguments. The handler must return [an `opentracing.Span` instance](https://opentracing-javascript.surge.sh/classes/span.html).
+
+After the handler function returns the span, decorator will:
+- Set its operation name as specified with `operationName` option (or the method name by default). So if you set a operation name while starting span in your handler, it **will be overriden**.
+- Add the tags if the class is decorated with `@Tag` or `@Component`.
 
 Lets also instrument `fakeDbRequest` method as we did it on previous tutorials
 
@@ -99,10 +108,15 @@ When you run the demo again, we will see a very similar trace with the trace gen
 However, it's really ugly and you probably have more than one route you want to trace the same way. We can extract the handler function and re-use it anywhere else.
 
 ```ts
-const customRelationHandler = (span: opentracing.Span, req: express.Request, res: express.Response) => {
+// Tracers
+const globalTracer = opentracing.globalTracer();
+const noopTracer = new opentracing.Tracer();
+
+// Handler function
+const handler = (span: opentracing.Span, req: express.Request, res: express.Response) => {
     const spanContext = stalkTracer.extract(opentracing.FORMAT_TEXT_MAP, req.headers);
-    if (!spanContext) return {};
-    return { childOf: spanContext };
+    if (!spanContext) return noopTracer.startSpan('');
+    return globalTracer.startSpan('', { childOf: spanContext });
 }
 
 class ServerDemo {
@@ -114,12 +128,12 @@ class ServerDemo {
         // ...
     }
 
-    @TraceAsync({ relation: 'custom', handler: customRelationHandler })
+    @TraceAsync({ handler })
     async handleGetEndpoint(span: opentracing.Span, req: express.Request, res: express.Response) {
         // ...
     }
 
-    @TraceAsync({ relation: 'custom', handler: customRelationHandler })
+    @TraceAsync({ handler })
     async handleAnotherEndpoint(span: opentracing.Span, req: express.Request, res: express.Response) {
         // ...
     }

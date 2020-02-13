@@ -1,4 +1,4 @@
-import { opentracing, stalk } from '../../../web.js';
+import { opentracing, stalk } from '../../..';
 const sleep = (duration: number) => new Promise(resolve => setTimeout(resolve, duration));
 
 // Let's require our decorators

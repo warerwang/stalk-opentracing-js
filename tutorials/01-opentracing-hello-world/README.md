@@ -3,11 +3,11 @@
 Let's start with standard opentracing samples. Stalk comes with [`opentracing` package](https://www.npmjs.com/package/opentracing) built-in, which is offical Javascript OpenTracing API 1.0.
 
 ```js
-// If you're on node.js
+// If you're on node.js or webpack-like environment
 const { opentracing } = require('stalk-opentracing');
 
 // If you're on browser, include web version of stalk
-// <script src="./node_modules/stalk-opentracing/web.js"></script>
+// <script src="./node_modules/stalk-opentracing/dist/web.js"></script>
 // When script is loaded, its exposed under window.StalkOpentracing
 const { opentracing } = window.StalkOpentracing;
 ```
