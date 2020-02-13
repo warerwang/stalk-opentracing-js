@@ -6,7 +6,6 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "webpack --mode production",
-    "postinstall": "./scripts/symlink.sh",
     "test": "mocha"
   },
   "keywords": [
