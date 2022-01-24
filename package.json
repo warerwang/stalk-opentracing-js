@@ -1,6 +1,6 @@
 {
-  "name": "stalk-opentracing",
-  "version": "0.0.5",
+  "name": "stalk-opentracing-new",
+  "version": "0.0.6",
   "description": "OpenTracing for javascript/typescript ecosystem",
   "main": "dist/node.js",
   "types": "dist/index.d.ts",
@@ -17,12 +17,9 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dgurkaynak/stalk-opentracing-js.git"
+    "url": "git+https://github.com/warerwang/stalk-opentracing-js.git"
   },
-  "bugs": {
-    "url": "https://github.com/dgurkaynak/stalk-opentracing-js/issues"
-  },
-  "homepage": "https://github.com/dgurkaynak/stalk-opentracing-js#readme",
+  "homepage": "https://github.com/warerwang/stalk-opentracing-js.git",
   "devDependencies": {
     "chai": "^4.2.0",
     "mocha": "^7.0.1",
