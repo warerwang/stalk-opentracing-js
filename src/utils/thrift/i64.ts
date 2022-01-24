@@ -8,6 +8,8 @@ export class I64 implements IBaseType {
     constructor(value: number | BigInt | string) {
         if (typeof value == 'number') this.value = BigInt(value);
         else if (typeof value == 'bigint') this.value = value;
+        //polyfilled BigInt for legend browsers
+        else if (typeof value == 'object') this.value = value;
         else if (typeof value == 'string') this.value = BigInt(`0x${value}`);
         else throw new Error(`Unsupported i64 value "${value}"`)
     }
